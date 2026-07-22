@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Пульс — мессенджер</title>
+<title>Asie_Telegraph — мессенджер</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%236366f1'/><path d='M8 34h11l5-15 9 28 6-17 3.5 4.5H56' stroke='white' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/cyrillic-400-normal.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/cyrillic-500-normal.min.css">
@@ -39,7 +39,7 @@ button{font-family:inherit}
 .logo svg{width:38px;height:38px}
 .logo::after{content:'';position:absolute;inset:0;border-radius:19px;box-shadow:0 0 0 0 rgba(99,102,241,.5);animation:pulse 2.4s infinite}
 @keyframes pulse{to{box-shadow:0 0 0 24px rgba(99,102,241,0)}}
-.login-card h1{margin:20px 0 6px;font-size:29px;font-weight:800;text-align:center;letter-spacing:-.5px}
+.login-card h1{margin:20px 0 6px;font-size:27px;font-weight:800;text-align:center;letter-spacing:-.5px}
 .tagline{text-align:center;color:var(--muted);font-size:14.5px;margin:0 0 18px}
 .notice{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.28);color:rgba(253,230,138,.95);padding:11px 13px;border-radius:13px;font-size:13px;line-height:1.5;margin-bottom:6px}
 .fl{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:15px 0 0}
@@ -54,16 +54,12 @@ button{font-family:inherit}
 .btn--danger:hover{box-shadow:0 10px 26px rgba(239,68,68,.35)}
 .btn-sm{padding:7px 12px;font-size:13px;border-radius:10px}
 .form-err{color:#f87171;font-size:13px;min-height:19px;margin-top:9px}
-.hint{margin-top:20px;padding:13px 14px;border-radius:13px;background:rgba(99,102,241,.08);border:1px dashed rgba(99,102,241,.4);font-size:13px;color:var(--muted);line-height:1.7}
-code{background:rgba(148,163,184,.16);padding:1.5px 7px;border-radius:6px;font-size:12.5px;color:#e2e8f0}
-.link-btn{background:none;border:none;color:#a5b4fc;cursor:pointer;font:inherit;font-size:13px;text-decoration:underline;padding:0}
-.link-btn:hover{color:#c7d2fe}
 
 /* ---------- APP LAYOUT ---------- */
 .app{display:flex;height:100dvh;overflow:hidden}
 .sidebar{width:342px;min-width:300px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column}
 .sb-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 8px}
-.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:19px;letter-spacing:-.3px}
+.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:17.5px;letter-spacing:-.3px}
 .brand-logo{width:34px;height:34px;border-radius:10px;background:var(--grad);display:grid;place-items:center;box-shadow:0 5px 16px rgba(99,102,241,.4)}
 .brand-logo svg{width:20px;height:20px}
 .sb-search{margin:6px 14px 10px;position:relative}
@@ -276,16 +272,15 @@ code{background:rgba(148,163,184,.16);padding:1.5px 7px;border-radius:6px;font-s
 <div id="loginView">
   <div class="login-card">
     <div class="logo"><svg viewBox="0 0 64 64" fill="none"><path d="M8 34h11l5-15 9 28 6-17 3.5 4.5H56" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <h1>Пульс</h1>
+    <h1>Asie_Telegraph</h1>
     <p class="tagline">Быстрый и лёгкий мессенджер для своей команды</p>
     <div class="notice">🔒 Регистрация закрыта — аккаунты создаёт администратор в админ-панели.</div>
     <form data-form="login">
-      <label class="fl">Логин<input class="inp" name="username" autocomplete="username" required placeholder="admin"></label>
+      <label class="fl">Логин<input class="inp" name="username" autocomplete="username" required placeholder="Ваш логин"></label>
       <label class="fl">Пароль<input class="inp" type="password" name="password" autocomplete="current-password" required placeholder="••••••••"></label>
       <div id="loginError" class="form-err"></div>
       <button class="btn btn--block" type="submit">Войти</button>
     </form>
-    <div class="hint">Демо-доступ администратора: логин <code>admin</code> · пароль <code>admin123</code> <button type="button" class="link-btn" data-action="fill-admin">заполнить</button><br>💡 Откройте сайт в двух вкладках под разными аккаунтами — сообщения, статусы и push синхронизируются мгновенно.</div>
   </div>
 </div>
 
@@ -293,7 +288,7 @@ code{background:rgba(148,163,184,.16);padding:1.5px 7px;border-radius:6px;font-s
 <div id="app" class="app hidden">
   <aside class="sidebar">
     <div class="sb-head">
-      <div class="brand"><span class="brand-logo"><svg viewBox="0 0 64 64" fill="none"><path d="M8 34h11l5-15 9 28 6-17 3.5 4.5H56" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Пульс</div>
+      <div class="brand"><span class="brand-logo"><svg viewBox="0 0 64 64" fill="none"><path d="M8 34h11l5-15 9 28 6-17 3.5 4.5H56" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Asie_Telegraph</div>
       <button class="icon-btn" data-action="new-chat" title="Новый чат" id="newChatBtn"></button>
     </div>
     <div class="sb-search"><input id="searchInput" placeholder="Поиск людей и чатов"></div>
@@ -436,7 +431,7 @@ function notifyMsg(m){
   const title=a?a.name:'Новое сообщение';
   const body=m.file?('📎 '+m.file.name):(m.text||'');
   try{
-    const n=new Notification(title,{body,tag:'pulse_'+m.id,icon:avatarUrl(a)});
+    const n=new Notification(title,{body,tag:'at_'+m.id,icon:avatarUrl(a)});
     n.onclick=()=>{window.focus();openChat(m.chatId);n.close();};
   }catch(e){}
 }
@@ -544,7 +539,7 @@ function renderSidebar(){
       <button class="icon-btn" data-action="logout" title="Выйти">${I.logout}</button>
     </div>`;
   const total=db.chats.filter(c=>c.members.includes(meId)).reduce((s,c)=>s+unreadCount(c.id),0);
-  document.title=total?`(${total}) Пульс`:'Пульс';
+  document.title=total?`(${total}) Asie_Telegraph`:'Asie_Telegraph';
 }
 function renderChat(){
   const cv=$('#chatView'),es=$('#emptyState');
@@ -816,7 +811,7 @@ function handleCreateAccount(f){
   db.users.push(nu);
   const chat={id:uid(),type:'dm',members:[meId,nu.id],createdAt:Date.now()};
   db.chats.push(chat);
-  db.messages.push({id:uid(),chatId:chat.id,authorId:meId,text:`Привет, ${name}! 👋 Ваш аккаунт создан. Добро пожаловать в Пульс!`,createdAt:Date.now(),reactions:{}});
+  db.messages.push({id:uid(),chatId:chat.id,authorId:meId,text:`Привет, ${name}! 👋 Ваш аккаунт создан. Добро пожаловать в Asie_Telegraph!`,createdAt:Date.now(),reactions:{}});
   state.lastCreds={username,password:pass};
   persist();render();openAdmin();
 }
@@ -883,10 +878,10 @@ async function notifToggle(){
   if(!('Notification'in window)){toast('Уведомления не поддерживаются','Браузер не поддерживает Notification API');return;}
   if(Notification.permission==='default'){
     const p=await Notification.requestPermission();
-    if(p==='granted'){toast('Push-уведомления включены ✓');try{new Notification('Пульс',{body:'Теперь вы не пропустите ни одного сообщения'});}catch(e){}}
+    if(p==='granted'){toast('Push-уведомления включены ✓');try{new Notification('Asie_Telegraph',{body:'Теперь вы не пропустите ни одного сообщения'});}catch(e){}}
     renderSidebar();
   }else if(Notification.permission==='granted'){
-    try{new Notification('Пульс',{body:'Уведомления работают ✓'});}catch(e){}
+    try{new Notification('Asie_Telegraph',{body:'Уведомления работают ✓'});}catch(e){}
   }else toast('Уведомления заблокированы','Разрешите их в настройках браузера');
 }
 
@@ -929,7 +924,6 @@ document.addEventListener('click',e=>{
     case 'logout':logout();break;
     case 'del-account':delAccount(id);break;
     case 'copy-creds':if(state.lastCreds)navigator.clipboard.writeText(`Логин: ${state.lastCreds.username}\nПароль: ${state.lastCreds.password}`).then(()=>toast('Данные скопированы ✓'));break;
-    case 'fill-admin':{const f=document.querySelector('[data-form="login"]');f.username.value='admin';f.password.value='admin123';break;}
   }
 });
 async function delMsg(id){
