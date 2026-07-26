@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Asie_Telegraph — мессенджер</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#6366f1">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Asie_Telegraph">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%236366f1'/><path d='M32 4c2.5 15.5 11.5 24.5 27 27-15.5 2.5-24.5 11.5-27 27-2.5-15.5-11.5-24.5-27-27 15.5-2.5 24.5-11.5 27-27z' fill='white'/></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/cyrillic-400-normal.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/cyrillic-500-normal.min.css">
@@ -201,6 +207,7 @@ body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{paddin
 'use strict';
 const SUPABASE_URL='https://ocjyjiutyhzhpiafesqv.supabase.co';
 const SUPABASE_KEY='sb_publishable_M20R-sJPFobMl5SiWGgyyA_MPaCMbrk';
+const VAPID_PUBLIC='BJgV0_dEXspfrOsjyqfXiHYRiSidF04Op1C6UcRbU1EQLVQdeQttLD1vqNcRaUZU-IMSqoDYsI5fOZljXcsQgBk';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const $=s=>document.querySelector(s);
@@ -219,7 +226,7 @@ function fmtSize(b){if(b<1024)return b+' Б';if(b<1048576)return (b/1024).toFixe
 function plural(n,one,few,many){const m10=n%10,m100=n%100;if(m10===1&&m100!==11)return one;if(m10>=2&&m10<=4&&(m100<10||m100>=20))return few;return many;}
 const linkify=t=>t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
 const svg=p=>`<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const I={search:svg('<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>'),plus:svg('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),bell:svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>'),shield:svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),logout:svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'),back:svg('<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>'),clip:svg('<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'),smile:svg('<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'),send:svg('<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>'),reply:svg('<polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>'),copy:svg('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),trash:svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'),download:svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),x:svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),check:svg('<polyline points="4 12.5 9.5 18 20 6.5"/>'),checks:svg('<polyline points="2 13 6 17 13 9"/><polyline points="9 13 13 17 22 8"/>'),file:svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'),users:svg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>')};
+const I={search:svg('<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>'),plus:svg('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),bell:svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>'),shield:svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),logout:svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'),back:svg('<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>'),clip:svg('<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'),smile:svg('<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'),send:svg('<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>'),reply:svg('<polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>'),copy:svg('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),trash:svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'),download:svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),install:svg('<path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/>'),x:svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),check:svg('<polyline points="4 12.5 9.5 18 20 6.5"/>'),checks:svg('<polyline points="2 13 6 17 13 9"/><polyline points="9 13 13 17 22 8"/>'),file:svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'),users:svg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>')};
 const STAR='<svg viewBox="0 0 64 64" fill="none"><path d="M32 4c2.5 15.5 11.5 24.5 27 27-15.5 2.5-24.5 11.5-27 27-2.5-15.5-11.5-24.5-27-27 15.5-2.5 24.5-11.5 27-27z" fill="#fff"/></svg>';
 
 function dbErr(op,res){if(res&&res.error){console.error('[Asie_Telegraph] '+op+':',res.error);toast('Ошибка: '+op,res.error.message,false,'',false);return true;}return false;}
@@ -232,7 +239,6 @@ const state={activeChat:null,search:'',replyTo:null,pendingFile:null,lightbox:nu
 const typingMap={};
 let creatingAccount=false;
 
-/* защита от дублей: добавляем, только если ещё нет */
 function addUser(u){if(!db.users.some(x=>x.id===u.id))db.users.push(u);}
 function addChat(c){if(!db.chats.some(x=>x.id===c.id))db.chats.push(c);}
 function addMember(r){if(!db.memberRows.some(x=>x.chat_id===r.chat_id&&x.user_id===r.user_id))db.memberRows.push(r);}
@@ -290,6 +296,32 @@ function setupRealtime(){
 function onIncoming(m){if(m.authorId===meId)return;const focused=document.hasFocus();if(state.activeChat===m.chatId&&focused){markRead(m.chatId);}else{notifyMsg(m);if(focused)toastMsg(m);}ding();}
 async function touchPres(){if(!meId)return;const now=Date.now();db.presence[meId]=now;dbLog('presence',await sb.from('presence').upsert({user_id:meId,last_seen:now},{onConflict:'user_id'}));}
 
+/* ===== WEB PUSH ===== */
+function urlBase64ToUint8Array(b){const p='='.repeat((4-b.length%4)%4);const s=(b+p).replace(/-/g,'+').replace(/_/g,'/');const r=atob(s);const a=new Uint8Array(r.length);for(let i=0;i<r.length;i++)a[i]=r.charCodeAt(i);return a;}
+async function trySubscribePush(){
+  if(!('serviceWorker'in navigator)||!('PushManager'in window)||!meId)return;
+  if(!('Notification'in window)||Notification.permission!=='granted')return;
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC)});
+    await sb.from('push_subscriptions').upsert({endpoint:sub.endpoint,user_id:meId,subscription:sub.toJSON(),created_at:Date.now()},{onConflict:'endpoint'});
+  }catch(e){console.error('push subscribe',e);}
+}
+async function sendPush(chatId,title,body,tag){
+  try{await sb.functions.invoke('send-push',{body:{chat_id:chatId,author_id:meId,title,body,tag,url:'/index.html'}});}
+  catch(e){console.error('sendPush',e);}
+}
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(me())renderSidebar();});
+window.addEventListener('appinstalled',()=>{deferredPrompt=null;if(me())renderSidebar();});
+async function installApp(){
+  if(!deferredPrompt){toast('Установка приложения','Откройте меню браузера и выберите «Установить приложение» / «На главный экран»');return;}
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt=null;renderSidebar();
+}
+
 const avatarCache={};
 function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=(n>>16)+p,g=((n>>8)&255)+p,b=(n&255)+p;r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return '#'+((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');}
 function avatarUrl(u){if(!u)return '';if(avatarCache[u.id])return avatarCache[u.id];const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,96,96);g.addColorStop(0,u.color);g.addColorStop(1,shade(u.color,-30));x.fillStyle=g;x.fillRect(0,0,96,96);x.fillStyle='#fff';x.font='700 40px Inter, sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(initials(u.name),48,50);return avatarCache[u.id]=c.toDataURL();}
@@ -310,7 +342,7 @@ function render(){if(!me()){if(meId){sessionStorage.removeItem('at_session');meI
 function renderSidebar(){
   const u=me();if(!u)return;
   const slot=$('#notifBannerSlot');const showBanner=('Notification'in window)&&Notification.permission==='default'&&!state.notifDismissed;
-  slot.innerHTML=showBanner?`<div class="notif-banner"><div><b>Push-уведомления</b><span>Включите, чтобы не пропускать сообщения</span></div><div class="nb-btns"><button class="btn btn-sm" data-action="notif-enable">Включить</button><button class="icon-btn icon-btn--sm" data-action="notif-dismiss">${I.x}</button></div></div>`:'';
+  slot.innerHTML=showBanner?`<div class="notif-banner"><div><b>Push-уведомления</b><span>Включите, чтобы получать их даже вне браузера</span></div><div class="nb-btns"><button class="btn btn-sm" data-action="notif-enable">Включить</button><button class="icon-btn icon-btn--sm" data-action="notif-dismiss">${I.x}</button></div></div>`:'';
   const q=state.search.trim().toLowerCase();
   const items=db.chats.filter(c=>membersOf(c.id).includes(meId)).map(c=>{const other=c.type==='group'?null:chatOther(c);const title=chatTitle(c);if(q&&!(title.toLowerCase().includes(q)||(other&&other.username.includes(q))))return null;const msgs=db.messages.filter(m=>m.chatId===c.id);const last=msgs[msgs.length-1];return {c,other,title,last,un:unreadCount(c.id),time:last?last.createdAt:c.createdAt};}).filter(Boolean).sort((a,b)=>b.time-a.time);
   $('#chatList').innerHTML=items.length?items.map(it=>{
@@ -318,7 +350,7 @@ function renderSidebar(){
     return `<div class="chat-item ${state.activeChat===it.c.id?'active':''}" data-action="chat-pick" data-id="${it.c.id}">${chatAvatarHtml(it.c)}<div class="ci-body"><div class="ci-top"><span class="ci-name">${esc(it.title)}</span><span class="ci-time">${fmtListTime(it.time)}</span></div><div class="ci-bottom"><span class="ci-last">${esc(snippet)}</span>${it.un?`<span class="badge">${it.un}</span>`:''}</div></div></div>`;
   }).join(''):`<div class="list-empty">${q?'Ничего не найдено':'Пока нет чатов'}<br><span>${q?'':'Нажмите ＋, чтобы начать переписку'}</span></div>`;
   const perm=('Notification'in window)?Notification.permission:'none';
-  $('#sbFoot').innerHTML=`<div class="me-chip" data-action="profile"><div class="avatar avatar--sm" style="--c:${u.color}">${esc(initials(u.name))}</div><div class="ur-info"><div class="me-name">${esc(u.name)}${u.role==='admin'?' <span class="role-badge">admin</span>':''}</div><div class="me-un">@${esc(u.username)}</div></div></div><div class="foot-actions"><button class="icon-btn ${perm==='granted'?'on':''}" data-action="notif-toggle" title="Уведомления">${I.bell}</button>${u.role==='admin'?`<button class="icon-btn" data-action="admin" title="Админ-панель">${I.shield}</button>`:''}<button class="icon-btn" data-action="logout" title="Выйти">${I.logout}</button></div>`;
+  $('#sbFoot').innerHTML=`<div class="me-chip" data-action="profile"><div class="avatar avatar--sm" style="--c:${u.color}">${esc(initials(u.name))}</div><div class="ur-info"><div class="me-name">${esc(u.name)}${u.role==='admin'?' <span class="role-badge">admin</span>':''}</div><div class="me-un">@${esc(u.username)}</div></div></div><div class="foot-actions">${deferredPrompt?`<button class="icon-btn" data-action="install-app" title="Установить приложение">${I.install}</button>`:''}<button class="icon-btn ${perm==='granted'?'on':''}" data-action="notif-toggle" title="Уведомления">${I.bell}</button>${u.role==='admin'?`<button class="icon-btn" data-action="admin" title="Админ-панель">${I.shield}</button>`:''}<button class="icon-btn" data-action="logout" title="Выйти">${I.logout}</button></div>`;
   const total=db.chats.filter(c=>membersOf(c.id).includes(meId)).reduce((s,c)=>s+unreadCount(c.id),0);
   document.title=total?`(${total}) Asie_Telegraph`:'Asie_Telegraph';
 }
@@ -355,7 +387,7 @@ function updateSendBtn(){const gone=activeOtherGone();$('#sendBtn').disabled=gon
 
 function openChat(chatId){state.activeChat=chatId;state.replyTo=null;markRead(chatId);state.forceBottom=true;render();document.body.classList.add('chat-open');if(window.innerWidth>760)$('#msgInput').focus();}
 function startDM(userId){let chat=db.chats.find(c=>{const ms=membersOf(c.id);return c.type==='dm'&&ms.includes(meId)&&ms.includes(userId);});if(!chat){chat={id:uid(),type:'dm',name:null,createdAt:Date.now()};const now=Date.now();addChat(chat);addMember({chat_id:chat.id,user_id:meId,last_read:now});addMember({chat_id:chat.id,user_id:userId,last_read:0});sb.from('chats').insert({id:chat.id,type:'dm',created_at:chat.createdAt}).then(r=>dbErr('создание чата',r));sb.from('chat_members').insert([{chat_id:chat.id,user_id:meId,last_read:now},{chat_id:chat.id,user_id:userId,last_read:0}]).then(r=>dbErr('создание участников',r));}closeModal();openChat(chat.id);}
-async function sendMessage(){const ta=$('#msgInput');const text=ta.value.trim();const f=state.pendingFile;if(!text&&!f)return;if(!state.activeChat||activeOtherGone())return;const m={id:uid(),chatId:state.activeChat,authorId:meId,text,createdAt:Date.now(),reactions:{}};if(f)m.file={data:f.data,name:f.name,size:f.size,type:f.type};if(state.replyTo)m.replyTo=state.replyTo.id;addMsg(m);markRead(m.chatId);state.replyTo=null;state.pendingFile=null;ta.value='';ta.style.height='auto';state.forceBottom=true;render();dbErr('отправка сообщения',await sb.from('messages').insert(msgToRow(m)));}
+async function sendMessage(){const ta=$('#msgInput');const text=ta.value.trim();const f=state.pendingFile;if(!text&&!f)return;if(!state.activeChat||activeOtherGone())return;const m={id:uid(),chatId:state.activeChat,authorId:meId,text,createdAt:Date.now(),reactions:{}};if(f)m.file={data:f.data,name:f.name,size:f.size,type:f.type};if(state.replyTo)m.replyTo=state.replyTo.id;addMsg(m);markRead(m.chatId);state.replyTo=null;state.pendingFile=null;ta.value='';ta.style.height='auto';state.forceBottom=true;render();const res=await sb.from('messages').insert(msgToRow(m));if(!dbErr('отправка сообщения',res)){const chat=db.chats.find(c=>c.id===m.chatId);const pushTitle=chat&&chat.type==='group'?`${chat.name||'Группа'} · ${me().name}`:me().name;const pushBody=m.file?('📎 '+m.file.name):(m.text||'');sendPush(m.chatId,pushTitle,pushBody,'at_'+m.chatId);}}
 async function toggleReact(msgId,emoji){const m=db.messages.find(x=>x.id===msgId);if(!m)return;m.reactions=m.reactions||{};const arr=m.reactions[emoji]||[];const i=arr.indexOf(meId);if(i>=0)arr.splice(i,1);else arr.push(meId);if(arr.length)m.reactions[emoji]=arr;else delete m.reactions[emoji];renderChat();dbErr('реакция',await sb.from('messages').update({reactions:m.reactions}).eq('id',msgId));}
 function downloadFile(f){const a=document.createElement('a');a.href=f.data;a.download=f.name;document.body.appendChild(a);a.click();a.remove();}
 function gotoMsg(id){const el=document.querySelector(`[data-mid="${id}"]`);if(!el){toast('Сообщение удалено');return;}el.scrollIntoView({behavior:'smooth',block:'center'});const b=el.querySelector('.bubble');b.classList.add('flash');setTimeout(()=>b.classList.remove('flash'),1300);}
@@ -443,9 +475,9 @@ async function delAccount(id){const u=db.users.find(x=>x.id===id);if(!u||id===me
 function openProfile(){const u=me();openModal(`<div class="adm-head"><h2 class="m-title">Профиль</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div><div class="prof-top"><div class="avatar avatar--lg" style="--c:${u.color}">${esc(initials(u.name))}</div><div><div class="prof-name">${esc(u.name)} ${u.role==='admin'?'<span class="role-badge">admin</span>':''}</div><div class="ur-sub">@${esc(u.username)} · с ${new Date(u.createdAt).toLocaleDateString('ru-RU')}</div></div></div><label class="chk chk--row"><input type="checkbox" data-action="toggle-sound" ${u.sound!==false?'checked':''}><span>Звук новых сообщений</span></label><h3 class="m-subtitle">Сменить пароль</h3><form data-form="change-pass" class="adm-form"><label>Текущий пароль<input class="inp" type="password" name="cur" required></label><label style="margin-top:9px">Новый пароль<input class="inp" type="password" name="nw" required minlength="4"></label><div id="passErr" class="form-err"></div><button class="btn btn--block" type="submit">Сохранить</button></form>`);}
 async function handleChangePass(f){const u=me();const err=$('#passErr');if(hashStr(f.cur.value)!==u.password){err.textContent='Неверный текущий пароль';return;}u.password=hashStr(f.nw.value);dbErr('смена пароля',await sb.from('users').update({password:u.password}).eq('id',u.id));closeModal();toast('Пароль изменён ✓');}
 
-function handleLogin(f){const un=f.username.value.trim().toLowerCase();const u=db.users.find(x=>x.username===un);if(!u||u.password!==hashStr(f.password.value)){$('#loginError').textContent='Неверный логин или пароль';return;}meId=u.id;sessionStorage.setItem('at_session',meId);state.activeChat=null;state.replyTo=null;state.pendingFile=null;$('#loginError').textContent='';f.reset();touchPres();render();toast('Привет, '+u.name+'! 👋');}
+function handleLogin(f){const un=f.username.value.trim().toLowerCase();const u=db.users.find(x=>x.username===un);if(!u||u.password!==hashStr(f.password.value)){$('#loginError').textContent='Неверный логин или пароль';return;}meId=u.id;sessionStorage.setItem('at_session',meId);state.activeChat=null;state.replyTo=null;state.pendingFile=null;$('#loginError').textContent='';f.reset();touchPres();render();trySubscribePush();toast('Привет, '+u.name+'! 👋');}
 function logout(){meId=null;sessionStorage.removeItem('at_session');state.activeChat=null;state.replyTo=null;state.pendingFile=null;$('#msgInput').value='';closeModal();render();}
-async function notifToggle(){if(!('Notification'in window)){toast('Уведомления не поддерживаются','Браузер не поддерживает Notification API');return;}if(Notification.permission==='default'){const p=await Notification.requestPermission();if(p==='granted'){toast('Push-уведомления включены ✓');try{new Notification('Asie_Telegraph',{body:'Теперь вы не пропустите ни одного сообщения'});}catch(e){}}renderSidebar();}else if(Notification.permission==='granted'){try{new Notification('Asie_Telegraph',{body:'Уведомления работают ✓'});}catch(e){}}else toast('Уведомления заблокированы','Разрешите их в настройках браузера');}
+async function notifToggle(){if(!('Notification'in window)){toast('Уведомления не поддерживаются','Браузер не поддерживает Notification API');return;}if(Notification.permission==='default'){const p=await Notification.requestPermission();if(p==='granted'){toast('Push-уведомления включены ✓');trySubscribePush();try{new Notification('Asie_Telegraph',{body:'Теперь уведомления будут приходить даже вне браузера'});}catch(e){}}renderSidebar();}else if(Notification.permission==='granted'){trySubscribePush();try{new Notification('Asie_Telegraph',{body:'Уведомления работают ✓'});}catch(e){}}else toast('Уведомления заблокированы','Разрешите их в настройках браузера');}
 
 document.addEventListener('click',e=>{const act=e.target.closest('[data-action]');if(!act){closePicker();return;}const a=act.dataset.action,id=act.dataset.id;switch(a){
   case 'chat-pick':openChat(id);break;
@@ -474,6 +506,7 @@ document.addEventListener('click',e=>{const act=e.target.closest('[data-action]'
   case 'confirm-no':resolveConfirm(false);break;
   case 'notif-enable':case 'notif-toggle':notifToggle();break;
   case 'notif-dismiss':state.notifDismissed=true;localStorage.setItem('at_notif_dismissed','1');renderSidebar();break;
+  case 'install-app':installApp();break;
   case 'admin':openAdmin();break;
   case 'profile':openProfile();break;
   case 'logout':logout();break;
@@ -506,9 +539,10 @@ $('#newChatBtn').innerHTML=I.plus;$('#attachBtn').innerHTML=I.clip;$('#emojiBtn'
 (async function init(){
   try{await loadAll();await writeTest();}
   catch(e){$('#loadingView').innerHTML=`<div class="load-err">⚠️ Не удалось подключиться к базе данных<br><br><span style="font-size:13px;color:#f87171">${esc(e.message||'Неизвестная ошибка')}</span><br><br><span style="opacity:.6;font-size:12px">Скопируйте этот текст и покажите разработчику.<br>Проверьте, что в Supabase выполнен SQL-скрипт и отключён RLS.</span><div class="copyright">by APC · As'ie Program Corporation</div></div>`;return;}
+  if('serviceWorker'in navigator){navigator.serviceWorker.register('/sw.js').catch(e=>console.error('sw register',e));}
   setupRealtime();
   if(meId&&!me()){sessionStorage.removeItem('at_session');meId=null;}
-  if(me())touchPres();
+  if(me()){touchPres();trySubscribePush();}
   render();
 })();
 </script>
