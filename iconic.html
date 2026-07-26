@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><title>Иконки Asie_Telegraph</title></head>
+<body style="font-family:sans-serif;background:#0b1120;color:#e6edf7;display:grid;place-items:center;min-height:100vh;text-align:center;margin:0">
+<div>
+  <h2>Иконки Asie_Telegraph</h2>
+  <p>Нажмите кнопку — скачаются <b>icon-192.png</b> и <b>icon-512.png</b>.<br>Их нужно положить в папку <code>icons</code> рядом с index.html.</p>
+  <button onclick="make()" style="padding:14px 26px;font-size:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;cursor:pointer;font-weight:600">Скачать иконки</button>
+</div>
+<script>
+function draw(size){
+  const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');
+  const r=size*0.22;const g=x.createLinearGradient(0,0,size,size);g.addColorStop(0,'#6366f1');g.addColorStop(1,'#8b5cf6');
+  x.fillStyle=g;x.beginPath();x.moveTo(r,0);x.lineTo(size-r,0);x.quadraticCurveTo(size,0,size,r);x.lineTo(size,size-r);
+  x.quadraticCurveTo(size,size,size-r,size);x.lineTo(r,size);x.quadraticCurveTo(0,size,0,size-r);x.lineTo(0,r);x.quadraticCurveTo(0,0,r,0);x.closePath();x.fill();
+  const cx=size/2,cy=size/2,R=size*0.36,k=size*0.06;x.fillStyle='#fff';x.beginPath();x.moveTo(cx,cy-R);
+  x.quadraticCurveTo(cx+k,cy-k,cx+R,cy);x.quadraticCurveTo(cx+k,cy+k,cx,cy+R);
+  x.quadraticCurveTo(cx-k,cy+k,cx-R,cy);x.quadraticCurveTo(cx-k,cy-k,cx,cy-R);x.closePath();x.fill();
+  return c;
+}
+function dl(cv,name){cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);},'image/png');}
+function make(){dl(draw(192),'icon-192.png');setTimeout(()=>dl(draw(512),'icon-512.png'),400);}
+</script>
+</body></html>
