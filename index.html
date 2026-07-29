@@ -488,7 +488,7 @@ function closeSavedPlate(){clearTimeout(savedPlateTimer);$('#savedPlate').classL
 function markRead(chatId){if(!meId)return;const arr=db.messages.filter(m=>m.chatId===chatId);if(!arr.length)return;const last=arr[arr.length-1].createdAt;let row=db.memberRows.find(r=>r.chat_id===chatId&&r.user_id===meId);if(row&&row.last_read>=last)return;const ts=Math.max(Date.now(),last);if(row)row.last_read=ts;else{row={chat_id:chatId,user_id:meId,last_read:ts,muted:false};addMember(row);}sb.from('chat_members').upsert({chat_id:chatId,user_id:meId,last_read:ts},{onConflict:'chat_id,user_id'}).then(r=>dbLog('прочтение',r));}
 function unreadCount(chatId){const lr=lastReadOf(meId,chatId);return db.messages.filter(m=>m.chatId===chatId&&m.authorId!==meId&&m.createdAt>lr).length;}
 
-/* ======= Mute чата ======= */
+/* ======= Mute чата — полностью без уведомлений ======= */
 async function toggleMute(chatId){
   const r=db.memberRows.find(r=>r.chat_id===chatId&&r.user_id===meId);
   if(!r)return;
@@ -496,8 +496,7 @@ async function toggleMute(chatId){
   const newMuted=r.muted;
   renderSidebar();updateHeader();
   const res=await sb.from('chat_members').update({muted:newMuted}).eq('chat_id',chatId).eq('user_id',meId);
-  if(dbErr(newMuted?'отключение уведомлений':'включение уведомлений',res))return;
-  toast(newMuted?'Уведомления выключены':'Уведомления включены',newMuted?'Push из этого чата приходить не будут':'Push из этого чата снова будут приходить');
+  dbErr(newMuted?'отключение уведомлений':'включение уведомлений',res);
 }
 
 function showLogin(){$('#loadingView').classList.add('hidden');$('#loginView').classList.remove('hidden');$('#app').classList.add('hidden');document.body.classList.remove('chat-open');}
@@ -993,7 +992,20 @@ function handleLogin(f){
   touchPres();render();trySubscribePush();
   toast('Привет, '+u.name+'! 👋');
 }
-async function notifToggle(){if(!('Notification'in window)){toast('Уведомления не поддерживаются','Браузер не поддерживает Notification API');return;}if(Notification.permission==='default'){const p=await Notification.requestPermission();if(p==='granted'){toast('Push-уведомления включены ✓');trySubscribePush();try{new Notification('Asie_Telegraph',{body:'Уведомления будут приходить всегда'});}catch(e){}}renderSidebar();}else if(Notification.permission==='granted'){trySubscribePush();try{new Notification('Asie_Telegraph',{body:'Уведомления работают ✓'});}catch(e){}}else toast('Уведомления заблокированы','Разрешите их в настройках браузера');}
+/* Включение push — без new Notification, подтверждение плашкой */
+async function notifToggle(){
+  if(!('Notification'in window)){toast('Уведомления не поддерживаются','Браузер не поддерживает Notification API');return;}
+  if(Notification.permission==='default'){
+    const p=await Notification.requestPermission();
+    if(p==='granted'){trySubscribePush();showSavedPlate('Push-уведомления включены');}
+    renderSidebar();
+  }else if(Notification.permission==='granted'){
+    trySubscribePush();
+    showSavedPlate('Push-уведомления работают');
+  }else{
+    toast('Уведомления заблокированы','Разрешите их в настройках браузера');
+  }
+}
 
 document.addEventListener('click',e=>{
   const voiceEl=e.target.closest('.m-voice');
@@ -1085,7 +1097,8 @@ document.addEventListener('submit',e=>{const f=e.target,kind=f.dataset.form;if(!
   if(kind==='group-desc'){const chat=db.chats.find(c=>c.id===state.activeChat);if(chat){const desc=(f.desc.value||'').slice(0,500);chat.description=desc;sb.from('chats').update({description:desc}).eq('id',chat.id).then(r=>{if(!dbErr('описание',r)){render();closeModal();showSavedPlate('Изменения сохранены');}});}}
 });
 document.addEventListener('change',e=>{
-  if(e.target.matches('[data-action="toggle-sound"]')){const u=me();if(u){u.sound=e.target.checked;toast(u.sound?'Звук включён':'Звук выключен');sb.from('users').update({sound:u.sound}).eq('id',u.id).then(r=>dbErr('настройка звука',r));}}
+  /* Переключатель звука — без уведомлений, состояние видно по чекбоксу */
+  if(e.target.matches('[data-action="toggle-sound"]')){const u=me();if(u){u.sound=e.target.checked;sb.from('users').update({sound:u.sound}).eq('id',u.id).then(r=>dbErr('настройка звука',r));}}
   if(e.target.matches('[data-action="toggle-mute-check"]')){if(state.activeChat)toggleMute(state.activeChat);}
   if(e.target.id==='packPublic'&&state.packDraft){state.packDraft.isPublic=e.target.checked;}
 });
