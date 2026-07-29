@@ -39,6 +39,7 @@ body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(-
 .inp{width:100%;background:#0d1526;border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font:inherit;font-size:14.5px;transition:.2s;outline:none;margin-top:6px}
 .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.22)}
 textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
+.field-hint{display:block;font-size:11.5px;color:var(--muted);margin-top:5px;font-weight:400;line-height:1.4}
 .btn{background:var(--grad);border:none;color:#fff;font:inherit;font-weight:600;padding:12px 18px;border-radius:12px;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px;justify-content:center;font-size:14.5px}
 .btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(99,102,241,.4)}
 .btn .icon{width:18px;height:18px}
@@ -58,15 +59,15 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .chat-list{flex:1;overflow-y:auto;padding:2px 8px 10px}.chat-item{display:flex;gap:11px;padding:10px;border-radius:14px;cursor:pointer;transition:background .15s;align-items:center}
 .chat-item:hover{background:rgba(148,163,184,.07)}.chat-item.active{background:linear-gradient(135deg,rgba(99,102,241,.24),rgba(139,92,246,.16))}
 .avatar{--c:#6366f1;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(0,0,0,.18)),var(--c);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;position:relative;flex-shrink:0;user-select:none;overflow:hidden}
-.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avatar img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;border-radius:50%;z-index:1}
 .avatar--xs{width:34px;height:34px;font-size:12px}.avatar--sm{width:38px;height:38px;font-size:13px}.avatar--md{width:42px;height:42px;font-size:14px}.avatar--lg{width:64px;height:64px;font-size:22px}.avatar--xl{width:92px;height:92px;font-size:30px}
 .avatar--group{background:linear-gradient(135deg,rgba(99,102,241,.55),rgba(139,92,246,.55)),var(--c)}
 .avatar--group .icon{width:55%;height:55%}
 .avatar--click{cursor:pointer;transition:.18s}.avatar--click:hover{transform:scale(1.05)}
 .avatar-edit{position:relative;cursor:pointer}
-.avatar-edit::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:inherit;opacity:0;transition:.15s;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>");background-repeat:no-repeat;background-position:center;background-size:28px 28px}
+.avatar-edit::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:inherit;opacity:0;transition:.15s;z-index:2;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>");background-repeat:no-repeat;background-position:center;background-size:28px 28px}
 .avatar-edit:hover::after{opacity:1}
-.online{position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:var(--green);border:2.5px solid var(--panel);z-index:1}
+.online{position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:var(--green);border:2.5px solid var(--panel);z-index:3}
 .ci-body{flex:1;min-width:0}.ci-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .ci-name{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ci-time{font-size:11.5px;color:var(--muted);flex-shrink:0}
 .ci-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:3px}.ci-last{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -272,6 +273,8 @@ const SUPABASE_URL='https://ocjyjiutyhzhpiafesqv.supabase.co';
 const SUPABASE_KEY='sb_publishable_M20R-sJPFobMl5SiWGgyyA_MPaCMbrk';
 const VAPID_PUBLIC='BJgV0_dEXspfrOsjyqfXiHYRiSidF04Op1C6UcRbU1EQLVQdeQttLD1vqNcRaUZU-IMSqoDYsI5fOZljXcsQgBk';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const UNAME_RE=/^[a-zA-Z0-9._,-]{2,20}$/;
+const UNAME_HINT='@юзернейм: 2-20 символов — латиница (a-z A-Z), цифры и символы . , _ -';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -291,7 +294,7 @@ function fmtDur(s){s=Math.round(s||0);return Math.floor(s/60)+':'+pad(s%60);}
 function plural(n,one,few,many){const m10=n%10,m100=n%100;if(m10===1&&m100!==11)return one;if(m10>=2&&m10<=4&&(m100<10||m100>=20))return few;return many;}
 const linkify=t=>t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
 const svg=p=>`<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const I={search:svg('<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>'),plus:svg('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),bell:svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>'),shield:svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),logout:svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'),back:svg('<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>'),clip:svg('<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'),smile:svg('<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'),sticker:svg('<rect x="3" y="3" width="18" height="18" rx="5"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'),send:svg('<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>'),reply:svg('<polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>'),copy:svg('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),trash:svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'),download:svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),install:svg('<path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/>'),mic:svg('<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>'),stop:svg('<rect x="6" y="6" width="12" height="12" rx="2"/>'),play:svg('<polygon points="5 3 19 12 5 21 5 3"/>'),pause:svg('<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'),info:svg('<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'),users:svg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),swap:svg('<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'),x:svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),check:svg('<polyline points="4 12.5 9.5 18 20 6.5"/>'),checks:svg('<polyline points="2 13 6 17 13 9"/><polyline points="9 13 13 17 22 8"/>'),file:svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>')};
+const I={search:svg('<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>'),plus:svg('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),bell:svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>'),shield:svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),logout:svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'),back:svg('<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>'),clip:svg('<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'),smile:svg('<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'),sticker:svg('<rect x="3" y="3" width="18" height="18" rx="5"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'),send:svg('<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>'),reply:svg('<polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>'),copy:svg('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),trash:svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'),download:svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),install:svg('<path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/>'),mic:svg('<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>'),stop:svg('<rect x="6" y="6" width="12" height="12" rx="2"/>'),play:svg('<polygon points="5 3 19 12 5 21 5 3"/>'),pause:svg('<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'),info:svg('<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'),users:svg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),x:svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),check:svg('<polyline points="4 12.5 9.5 18 20 6.5"/>'),checks:svg('<polyline points="2 13 6 17 13 9"/><polyline points="9 13 13 17 22 8"/>'),file:svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>')};
 const STAR='<svg viewBox="0 0 64 64" fill="none"><path d="M32 4c2.5 15.5 11.5 24.5 27 27-15.5 2.5-24.5 11.5-27 27-2.5-15.5-11.5-24.5-27-27 15.5-2.5 24.5-11.5 27-27z" fill="#fff"/></svg>';
 
 function dbErr(op,res){if(res&&res.error){console.error('[Asie_Telegraph] '+op+':',res.error);toast('Ошибка: '+op,res.error.message,false,'',false);return true;}return false;}
@@ -305,7 +308,6 @@ const typingMap={};
 let creatingAccount=false;
 const activeAudios=new Map();
 
-/* ======= МУЛЬТИАККАУНТ (localStorage) ======= */
 function getAccountIds(){try{return (JSON.parse(localStorage.getItem('at_accounts')||'[]')).map(Number);}catch(e){return[];}}
 function saveAccountIds(ids){localStorage.setItem('at_accounts',JSON.stringify(ids));}
 function isRemembered(id){return getAccountIds().includes(id);}
@@ -331,7 +333,7 @@ function avatarHtml(entity,size='',opts={}){
   const edit=opts.edit?'avatar-edit':'';const isGroup=opts.group;const groupClass=isGroup?'avatar--group':'';
   const col=entity?.color||'#64748b';const img=entity?.avatar_url;const ini=initials(entity?.name||'');
   const online=opts.showOnline&&entity&&!isGroup&&isOnline(entity.id);
-  return `<div class="avatar ${size} ${groupClass} ${clickable} ${edit}" style="--c:${col}"${clickAttr}>${img?`<img src="${esc(img)}" alt="">`:esc(ini)}${online?'<span class="online"></span>':''}</div>`;
+  return `<div class="avatar ${size} ${groupClass} ${clickable} ${edit}" style="--c:${col}"${clickAttr}>${esc(ini)}${img?`<img src="${esc(img)}" alt="" onerror="this.remove()">`:''}${online?'<span class="online"></span>':''}</div>`;
 }
 function chatAvatarHtml(chat,size='',opts={}){
   if(chat.type==='group')return avatarHtml({color:colorFor(chat.name||'group'),avatar_url:chat.avatar_url,name:chat.name||'Группа'},size,{...opts,group:true});
@@ -397,7 +399,10 @@ async function syncStickers(){
   db.userPacks=(u.data||[]).map(x=>({userId:Number(x.user_id),packId:Number(x.pack_id),addedAt:x.added_at}));
   if(!$('#stickerPanel').classList.contains('hidden'))renderStickerPanel();
 }
-function onIncoming(m){if(m.authorId===meId)return;const focused=document.hasFocus();if(state.activeChat===m.chatId&&focused){markRead(m.chatId);}else{notifyMsg(m);if(focused)toastMsg(m);}ding();}
+/* Входящее сообщение: больше НЕ показываем системный push поверх приложения.
+   Только маленькая всплывашка внутри чата + звук. Системный push придёт
+   через service worker, только если приложение закрыто/свёрнуто. */
+function onIncoming(m){if(m.authorId===meId)return;const focused=document.hasFocus();if(state.activeChat===m.chatId&&focused){markRead(m.chatId);}else if(focused){toastMsg(m);}ding();}
 async function touchPres(){if(!meId)return;const now=Date.now();db.presence[meId]=now;dbLog('presence',await sb.from('presence').upsert({user_id:meId,last_seen:now},{onConflict:'user_id'}));}
 async function clearPres(id){if(!id)return;dbLog('presence',await sb.from('presence').upsert({user_id:id,last_seen:0},{onConflict:'user_id'}));delete db.presence[id];}
 
@@ -442,7 +447,6 @@ async function uploadVoiceFile(blob){
 const avatarCache={};
 function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=(n>>16)+p,g=((n>>8)&255)+p,b=(n&255)+p;r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return '#'+((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');}
 function avatarUrlForNotify(u){if(!u)return '';if(u.avatar_url)return u.avatar_url;if(avatarCache[u.id])return avatarCache[u.id];const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,96,96);g.addColorStop(0,u.color);g.addColorStop(1,shade(u.color,-30));x.fillStyle=g;x.fillRect(0,0,96,96);x.fillStyle='#fff';x.font='700 40px Inter, sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(initials(u.name),48,50);return avatarCache[u.id]=c.toDataURL();}
-function notifyMsg(m){if(!('Notification'in window)||Notification.permission!=='granted')return;const a=db.users.find(u=>u.id===m.authorId);const chat=db.chats.find(c=>c.id===m.chatId);let title=a?a.name:'Новое сообщение';if(chat&&chat.type==='group')title=(chat.name||'Группа')+(a?' · '+a.name:'');let body=m.stickerUrl?'🖼 Стикер':(m.voice?('🎤 Голосовое · '+fmtDur(m.voice.duration)):(m.file?('📎 '+m.file.name):(m.text||'')));try{const n=new Notification(title,{body,tag:'at_'+m.chatId,icon:avatarUrlForNotify(a),badge:avatarUrlForNotify(a),renotify:true});n.onclick=()=>{window.focus();openChat(m.chatId);n.close();};}catch(e){}}
 let actx=null;
 function ding(){const u=me();if(u&&u.sound===false)return;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.setValueAtTime(880,t);o.frequency.exponentialRampToValueAtTime(587,t+.13);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.11,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.32);o.connect(g).connect(actx.destination);o.start(t);o.stop(t+.34);}catch(e){}}
 document.addEventListener('click',()=>{try{actx&&actx.state==='suspended'&&actx.resume();}catch(e){}},{once:true});
@@ -459,7 +463,7 @@ function render(){if(!me()){if(meId){sessionStorage.removeItem('at_session');meI
 function renderSidebar(){
   const u=me();if(!u)return;
   const slot=$('#notifBannerSlot');const showBanner=('Notification'in window)&&Notification.permission==='default'&&!state.notifDismissed;
-  slot.innerHTML=showBanner?`<div class="notif-banner"><div><b>Push-уведомления</b><span>Включите, чтобы получать их даже вне браузера</span></div><div class="nb-btns"><button class="btn btn-sm" data-action="notif-enable">Включить</button><button class="icon-btn icon-btn--sm" data-action="notif-dismiss">${I.x}</button></div></div>`:'';
+  slot.innerHTML=showBanner?`<div class="notif-banner"><div><b>Push-уведомления</b><span>Приходят, только когда приложение закрыто</span></div><div class="nb-btns"><button class="btn btn-sm" data-action="notif-enable">Включить</button><button class="icon-btn icon-btn--sm" data-action="notif-dismiss">${I.x}</button></div></div>`:'';
   const q=state.search.trim().toLowerCase();
   const items=db.chats.filter(c=>membersOf(c.id).includes(meId)).map(c=>{const other=c.type==='group'?null:chatOther(c);const title=chatTitle(c);if(q&&!(title.toLowerCase().includes(q)||(other&&other.username.toLowerCase().includes(q))))return null;const msgs=db.messages.filter(m=>m.chatId===c.id);const last=msgs[msgs.length-1];return {c,other,title,last,un:unreadCount(c.id),time:last?last.createdAt:c.createdAt};}).filter(Boolean).sort((a,b)=>b.time-a.time);
   $('#chatList').innerHTML=items.length?items.map(it=>{
@@ -538,7 +542,6 @@ function gotoMsg(id){const el=document.querySelector(`[data-mid="${id}"]`);if(!e
 function openLightboxUrl(url){state.lightbox={data:url,name:'image'};$('#lightbox').innerHTML=`<button class="icon-btn lb-x" data-action="lb-close">${I.x}</button><img src="${esc(url)}" alt="">`;$('#lightbox').classList.remove('hidden');}
 function openLightbox(f){state.lightbox=f;$('#lightbox').innerHTML=`<button class="icon-btn lb-x" data-action="lb-close">${I.x}</button><button class="btn lb-dl" data-action="lb-download">${I.download}<span>Скачать</span></button><img src="${f.data}" alt="${esc(f.name)}">`;$('#lightbox').classList.remove('hidden');}
 
-/* ========== СТИКЕРЫ ========== */
 function myPackList(){const added=db.userPacks.filter(r=>r.userId===meId).map(r=>r.packId);return db.packs.filter(p=>p.creatorId===meId||added.includes(p.id));}
 function storePackList(){const mine=new Set(myPackList().map(p=>p.id));return db.packs.filter(p=>p.isPublic&&!mine.has(p.id));}
 function openStickerPanel(){state.stickerTab=state.stickerTab||'my';closePicker();renderStickerPanel();$('#stickerPanel').classList.remove('hidden');}
@@ -657,7 +660,6 @@ async function delPack(packId){
   sb.from('sticker_packs').delete().eq('id',packId).then(r=>dbErr('удаление набора',r));
 }
 
-/* ========== ГОЛОСОВЫЕ ========== */
 function getAudioEl(msgId){return document.querySelector(`.m-voice[data-vid="${msgId}"]`);}
 function attachAudio(msgId){
   if(activeAudios.has(msgId))return activeAudios.get(msgId);
@@ -718,7 +720,6 @@ function closeModal(){$('#modalRoot').innerHTML='';state.lastCreds=null;}
 function confirmDlg(title,text,okLabel='Подтвердить'){return new Promise(res=>{confirmRes=res;$('#modalRoot').innerHTML=`<div class="modal-back" data-action="modal-close"><div class="modal modal--sm"><h2 class="m-title">${esc(title)}</h2><p class="m-text-p">${esc(text)}</p><div class="m-actions"><button class="btn btn--ghost" data-action="confirm-no">Отмена</button><button class="btn btn--danger" data-action="confirm-yes">${esc(okLabel)}</button></div></div></div>`;});}
 function resolveConfirm(v){if(confirmRes){confirmRes(v);confirmRes=null;}closeModal();}
 
-/* ========== МУЛЬТИАККАУНТ: ПАНЕЛЬ ========== */
 function openAccountPanel(){
   const cur=me();
   const others=getAccountIds().filter(id=>id!==meId).map(id=>db.users.find(u=>u.id===id)).filter(Boolean);
@@ -816,8 +817,13 @@ function openGroupInfo(){
 }
 async function uploadGroupAvatar(file){
   const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat)return;
-  try{toast('Загрузка аватара…');const url=await uploadAvatar(file,'group',chat.id);chat.avatar_url=url;sb.from('chats').update({avatar_url:url}).eq('id',chat.id);render();openGroupInfo();toast('Аватар обновлён ✓');}
-  catch(e){toast('Ошибка загрузки',e.message||'Проверьте настройки Storage');}
+  try{
+    toast('Загрузка аватара…');
+    const url=await uploadAvatar(file,'group',chat.id);
+    const r=await sb.from('chats').update({avatar_url:url}).eq('id',chat.id);
+    if(dbErr('сохранение аватара',r))return;
+    chat.avatar_url=url;render();openGroupInfo();toast('Аватар обновлён ✓');
+  }catch(e){toast('Ошибка загрузки',e.message||'Проверьте настройки Storage');}
 }
 async function addGroupMember(userId){
   const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat||chat.type!=='group')return;
@@ -829,13 +835,13 @@ async function addGroupMember(userId){
   addMsg(wm);sb.from('messages').insert(msgToRow(wm)).then(r=>dbErr('сообщение',r));
   renderChat();openGroupInfo();
 }
-function openAdmin(){const u=me();if(!u||u.role!=='admin')return;const users=[...db.users].sort((a,b)=>a.createdAt-b.createdAt);openModal(`<div class="adm-head"><h2 class="m-title">🛡 Админ-панель</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div><p class="m-text-p">Аккаунты создаются только отсюда. Передайте логин и пароль пользователю — сам он зарегистрироваться не сможет.</p>${state.lastCreds?`<div class="creds-box"><div><b>Аккаунт создан ✓</b><div class="creds-line">@${esc(state.lastCreds.username)} · Пароль: <code>${esc(state.lastCreds.password)}</code></div></div><button class="btn btn-sm" data-action="copy-creds">Копировать</button></div>`:''}<form data-form="create-account" class="adm-form"><div class="f-row"><label>Имя<input class="inp" name="name" required maxlength="40" placeholder="Иван Петров"></label><label>@юзернейм<input class="inp" name="username" required maxlength="20" placeholder="ivan (латиница)"></label></div><div class="f-row"><label>Пароль<input class="inp" name="password" required minlength="4" maxlength="30" placeholder="минимум 4 символа"></label><label class="chk"><input type="checkbox" name="isadmin"><span>Администратор</span></label></div><div id="admErr" class="form-err"></div><button class="btn btn--block" type="submit" style="margin-top:6px">Создать аккаунт</button></form><div class="adm-stats">Пользователей: ${db.users.length} · Сообщений: ${db.messages.length}</div><h3 class="m-subtitle">Аккаунты</h3><div class="user-list">${users.map(x=>`<div class="user-row user-row--adm">${avatarHtml(x,'avatar--sm',{showOnline:true})}<div class="ur-info"><div class="ur-name">${esc(x.name)} ${x.role==='admin'?'<span class="role-badge">admin</span>':''}${x.id===meId?'<span class="role-badge role-badge--you">вы</span>':''}</div><div class="ur-sub">@${esc(x.username)} · #${x.id} · ${isOnline(x.id)?'<span class="sub-online">в сети</span>':(lastSeen(x.id)?'был(а) '+fmtTime(lastSeen(x.id)):'не заходил(а)')}</div></div>${x.id!==meId?`<button class="icon-btn ma-btn--danger" data-action="del-account" data-id="${x.id}" title="Удалить аккаунт">${I.trash}</button>`:''}</div>`).join('')}</div>`,true);}
+function openAdmin(){const u=me();if(!u||u.role!=='admin')return;const users=[...db.users].sort((a,b)=>a.createdAt-b.createdAt);openModal(`<div class="adm-head"><h2 class="m-title">🛡 Админ-панель</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div><p class="m-text-p">Аккаунты создаются только отсюда. Передайте логин и пароль пользователю — сам он зарегистрироваться не сможет.</p>${state.lastCreds?`<div class="creds-box"><div><b>Аккаунт создан ✓</b><div class="creds-line">@${esc(state.lastCreds.username)} · Пароль: <code>${esc(state.lastCreds.password)}</code></div></div><button class="btn btn-sm" data-action="copy-creds">Копировать</button></div>`:''}<form data-form="create-account" class="adm-form"><div class="f-row"><label>Имя<input class="inp" name="name" required maxlength="40" placeholder="Иван Петров"></label><label>@юзернейм<input class="inp" name="username" required maxlength="20" pattern="[a-zA-Z0-9._,-]{2,20}" placeholder="ivan_2024"></label></div><div class="f-row"><label>Пароль<input class="inp" name="password" required minlength="4" maxlength="30" placeholder="минимум 4 символа"></label><label class="chk"><input type="checkbox" name="isadmin"><span>Администратор</span></label></div><span class="field-hint">Юзернейм: латиница (a-z A-Z), цифры и символы . , _ - · 2-20 символов</span><div id="admErr" class="form-err"></div><button class="btn btn--block" type="submit" style="margin-top:6px">Создать аккаунт</button></form><div class="adm-stats">Пользователей: ${db.users.length} · Сообщений: ${db.messages.length}</div><h3 class="m-subtitle">Аккаунты</h3><div class="user-list">${users.map(x=>`<div class="user-row user-row--adm">${avatarHtml(x,'avatar--sm',{showOnline:true})}<div class="ur-info"><div class="ur-name">${esc(x.name)} ${x.role==='admin'?'<span class="role-badge">admin</span>':''}${x.id===meId?'<span class="role-badge role-badge--you">вы</span>':''}</div><div class="ur-sub">@${esc(x.username)} · #${x.id} · ${isOnline(x.id)?'<span class="sub-online">в сети</span>':(lastSeen(x.id)?'был(а) '+fmtTime(lastSeen(x.id)):'не заходил(а)')}</div></div>${x.id!==meId?`<button class="icon-btn ma-btn--danger" data-action="del-account" data-id="${x.id}" title="Удалить аккаунт">${I.trash}</button>`:''}</div>`).join('')}</div>`,true);}
 async function handleCreateAccount(f){
   if(creatingAccount)return;
-  const err=$('#admErr');const name=f.name.value.trim();const username=f.username.value.trim().toLowerCase();const pass=f.password.value;const isAdmin=f.isadmin.checked;
+  const err=$('#admErr');const name=f.name.value.trim();const username=f.username.value.trim();const pass=f.password.value;const isAdmin=f.isadmin.checked;
   if(!name){err.textContent='Укажите имя';return;}
-  if(!/^[a-z0-9_]{2,20}$/.test(username)){err.textContent='@юзернейм: 2–20 символов, только a-z, 0-9 и _';return;}
-  if(db.users.some(u=>u.username===username)){err.textContent='Такой @юзернейм уже занят';return;}
+  if(!UNAME_RE.test(username)){err.textContent=UNAME_HINT;return;}
+  if(db.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){err.textContent='Такой @юзернейм уже занят';return;}
   if(pass.length<4){err.textContent='Пароль — минимум 4 символа';return;}
   creatingAccount=true;
   try{
@@ -861,10 +867,10 @@ function openProfile(){const u=me();openModal(`<div class="adm-head"><h2 class="
   <h3 class="m-subtitle">Редактировать</h3>
   <form data-form="edit-profile" class="adm-form">
     <label>Имя<input class="inp" name="name" value="${esc(u.name)}" required maxlength="40"></label>
-    <label style="margin-top:8px">@юзернейм (логин для входа)<input class="inp" name="username" value="${esc(u.username)}" required maxlength="20" pattern="[a-z0-9_]{2,20}" title="латиница, 2-20 символов"></label>
+    <label style="margin-top:8px">@юзернейм (логин для входа)<input class="inp" name="username" value="${esc(u.username)}" required maxlength="20" pattern="[a-zA-Z0-9._,-]{2,20}" title="${esc(UNAME_HINT)}"><span class="field-hint">Только латиница (строчные и заглавные), цифры и символы . , _ - · от 2 до 20 символов</span></label>
     <label style="margin-top:8px">О себе (до 200 симв.)<textarea class="inp" name="bio" maxlength="200" placeholder="Несколько слов о себе">${esc(u.bio||'')}</textarea></label>
     <div id="profErr" class="form-err"></div>
-    <button class="btn btn--block" type="submit">Сохранить</button>
+    <button class="btn btn--block" type="submit">Сохранить изменения</button>
   </form>
   <label class="chk chk--row"><input type="checkbox" data-action="toggle-sound" ${u.sound!==false?'checked':''}><span>Звук новых сообщений</span></label>
   <h3 class="m-subtitle">Сменить пароль</h3>
@@ -876,18 +882,26 @@ function openProfile(){const u=me();openModal(`<div class="adm-head"><h2 class="
   </form>`,true);}
 async function handleEditProfile(f){
   const u=me();const err=$('#profErr');
-  const name=f.name.value.trim();const username=f.username.value.trim().toLowerCase();const bio=f.bio.value.trim();
+  const name=f.name.value.trim();const username=f.username.value.trim();const bio=f.bio.value.trim();
   if(!name){err.textContent='Укажите имя';return;}
-  if(!/^[a-z0-9_]{2,20}$/.test(username)){err.textContent='@юзернейм: 2–20 символов, только a-z, 0-9 и _';return;}
-  if(db.users.some(x=>x.username===username&&x.id!==meId)){err.textContent='Этот @юзернейм уже занят';return;}
-  u.name=name;u.username=username;u.bio=bio;
-  const r=await sb.from('users').update({name,username,bio}).eq('id',meId);
+  if(!UNAME_RE.test(username)){err.textContent=UNAME_HINT;return;}
+  if(db.users.some(x=>x.username.toLowerCase()===username.toLowerCase()&&x.id!==meId)){err.textContent='Этот @юзернейм уже занят';return;}
+  if(bio.length>200){err.textContent='О себе — максимум 200 символов';return;}
+  const avatar=u.avatar_url||null;
+  const r=await sb.from('users').update({name,username,bio,avatar_url:avatar}).eq('id',meId);
   if(dbErr('сохранение профиля',r))return;
+  const cur=me();if(cur){cur.name=name;cur.username=username;cur.bio=bio;cur.avatar_url=avatar;}
   toast('Профиль сохранён ✓');render();openProfile();
 }
 async function handleEditAvatar(file){
-  try{toast('Загрузка аватара…');const u=me();const url=await uploadAvatar(file,'user',u.id);u.avatar_url=url;sb.from('users').update({avatar_url:url}).eq('id',u.id);render();openProfile();toast('Аватар обновлён ✓');}
-  catch(e){toast('Ошибка загрузки',e.message||'Проверьте настройки Storage');}
+  try{
+    toast('Загрузка аватара…');
+    const url=await uploadAvatar(file,'user',meId);
+    const r=await sb.from('users').update({avatar_url:url}).eq('id',meId);
+    if(dbErr('сохранение аватара',r))return;
+    const cur=me();if(cur)cur.avatar_url=url;
+    render();openProfile();toast('Аватар обновлён ✓');
+  }catch(e){toast('Ошибка загрузки',e.message||'Проверьте настройки Storage');}
 }
 async function handleChangePass(f){const u=me();const err=$('#passErr');if(hashStr(f.cur.value)!==u.password){err.textContent='Неверный текущий пароль';return;}u.password=hashStr(f.nw.value);dbErr('смена пароля',await sb.from('users').update({password:u.password}).eq('id',u.id));closeModal();toast('Пароль изменён ✓');}
 function openDmInfo(){
@@ -912,7 +926,7 @@ function openPwaHelp(){
 
 function handleLogin(f){
   const un=f.username.value.trim().toLowerCase();
-  const u=db.users.find(x=>x.username===un);
+  const u=db.users.find(x=>x.username.toLowerCase()===un);
   if(!u||u.password!==hashStr(f.password.value)){$('#loginError').textContent='Неверный @юзернейм или пароль';return;}
   meId=u.id;
   const remember=f.remember?f.remember.checked:true;
@@ -923,7 +937,7 @@ function handleLogin(f){
   touchPres();render();trySubscribePush();
   toast('Привет, '+u.name+'! 👋');
 }
-async function notifToggle(){if(!('Notification'in window)){toast('Уведомления не поддерживаются','Браузер не поддерживает Notification API');return;}if(Notification.permission==='default'){const p=await Notification.requestPermission();if(p==='granted'){toast('Push-уведомления включены ✓');trySubscribePush();try{new Notification('Asie_Telegraph',{body:'Теперь уведомления будут приходить даже вне браузера'});}catch(e){}}renderSidebar();}else if(Notification.permission==='granted'){trySubscribePush();try{new Notification('Asie_Telegraph',{body:'Уведомления работают ✓'});}catch(e){}}else toast('Уведомления заблокированы','Разрешите их в настройках браузера');}
+async function notifToggle(){if(!('Notification'in window)){toast('Уведомления не поддерживаются','Браузер не поддерживает Notification API');return;}if(Notification.permission==='default'){const p=await Notification.requestPermission();if(p==='granted'){toast('Push-уведомления включены ✓');trySubscribePush();try{new Notification('Asie_Telegraph',{body:'Уведомления будут приходить, когда приложение закрыто'});}catch(e){}}renderSidebar();}else if(Notification.permission==='granted'){trySubscribePush();try{new Notification('Asie_Telegraph',{body:'Уведомления работают ✓'});}catch(e){}}else toast('Уведомления заблокированы','Разрешите их в настройках браузера');}
 
 document.addEventListener('click',e=>{
   const voiceEl=e.target.closest('.m-voice');
