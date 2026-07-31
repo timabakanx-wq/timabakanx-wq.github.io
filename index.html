@@ -188,7 +188,6 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .prof-bio{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:10px;white-space:pre-wrap;word-break:break-word}
 .grp-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;flex-shrink:0;transition:.15s;color:#fff}
 .grp-check.on{background:var(--grad);border-color:transparent}.grp-check .icon{width:13px;height:13px}
-/* ======= Универсальная плашка (ОК / Ошибка) ======= */
 .plate{position:fixed;inset:0;z-index:150;display:grid;place-items:center;pointer-events:none}
 .plate-card{pointer-events:auto;background:var(--panel2);border:1px solid var(--border);border-radius:20px;padding:24px 32px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 24px 70px rgba(0,0,0,.65);animation:platePop .32s cubic-bezier(.2,.9,.3,1.25);min-width:230px;max-width:min(420px,90vw)}
 .plate-ic{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff}
@@ -285,6 +284,7 @@ const VAPID_PUBLIC='BJgV0_dEXspfrOsjyqfXiHYRiSidF04Op1C6UcRbU1EQLVQdeQttLD1vqNcR
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const UNAME_RE=/^[a-zA-Z0-9._,-]{2,20}$/;
 const UNAME_HINT='@юзернейм: 2-20 символов — латиница (a-z A-Z), цифры и символы . , _ -';
+const AUTH_DOMAIN='@asie-telegraph.local';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -309,7 +309,7 @@ const STAR='<svg viewBox="0 0 64 64" fill="none"><path d="M32 4c2.5 15.5 11.5 24
 const ICON_OK='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
 const ICON_ERR='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
-/* ======= Универсальная плашка: 'ok' (зелёная, автозакрытие) / 'error' (красная, только по ОК) ======= */
+/* ======= Плашка: 'ok' (зелёная, автозакрытие) / 'error' (красная, только по ОК) ======= */
 let plateTimer=null;
 function showPlate(msg,type){
   type=type||'ok';
@@ -322,7 +322,6 @@ function showPlate(msg,type){
   card.style.animation='none';void card.offsetWidth;card.style.animation='';
   clearTimeout(plateTimer);
   if(type==='ok'){plateTimer=setTimeout(closePlate,2600);}
-  /* error — без автозакрытия, закрывается по ОК/Esc */
 }
 function closePlate(){clearTimeout(plateTimer);const el=$('#plate');if(el)el.classList.add('hidden');}
 
@@ -337,6 +336,17 @@ const typingMap={};
 let creatingAccount=false;
 const activeAudios=new Map();
 
+/* ======= Rate limiting (клиентский, запасной) ======= */
+const RL_KEY='at_login_rl';
+function rlGet(){try{return JSON.parse(localStorage.getItem(RL_KEY)||'{"n":0,"until":0}');}catch(e){return{n:0,until:0};}}
+function rlFail(){const r=rlGet();r.n++;if(r.n>=5){r.until=Date.now()+15*60*1000;r.n=0;}localStorage.setItem(RL_KEY,JSON.stringify(r));return r;}
+function rlCheck(){const r=rlGet();if(r.until>Date.now())return{allowed:false,retryAfter:Math.ceil((r.until-Date.now())/1000)};return{allowed:true};}
+function rlClear(){localStorage.removeItem(RL_KEY);}
+async function loginGuard(action){
+  try{const {data}=await sb.functions.invoke('login-guard',{body:{action}});return data||{allowed:true};}
+  catch(e){return{allowed:true};}
+}
+
 function getAccountIds(){try{return (JSON.parse(localStorage.getItem('at_accounts')||'[]')).map(Number);}catch(e){return[];}}
 function saveAccountIds(ids){localStorage.setItem('at_accounts',JSON.stringify(ids));}
 function isRemembered(id){return getAccountIds().includes(id);}
@@ -348,7 +358,7 @@ function addChat(c){if(!db.chats.some(x=>x.id===c.id))db.chats.push(c);}
 function addMember(r){if(!db.memberRows.some(x=>x.chat_id===r.chat_id&&x.user_id===r.user_id))db.memberRows.push(r);}
 function addMsg(m){if(!db.messages.some(x=>x.id===m.id))db.messages.push(m);}
 
-function userFromRow(r){return {id:Number(r.id),username:r.username,password:r.password,name:r.name,role:r.role,color:r.color,sound:r.sound,bio:r.bio||'',avatar_url:r.avatar_url||null,createdAt:r.created_at};}
+function userFromRow(r){return {id:Number(r.id),auth_id:r.auth_id||null,username:r.username,password:r.password,name:r.name,role:r.role,color:r.color,sound:r.sound,bio:r.bio||'',avatar_url:r.avatar_url||null,createdAt:r.created_at};}
 function userToRow(u){return {id:u.id,username:u.username,password:u.password,name:u.name,role:u.role,color:u.color,sound:u.sound!==false,bio:u.bio||'',avatar_url:u.avatar_url||null,created_at:u.createdAt};}
 function normMsg(r){const m={id:Number(r.id),chatId:Number(r.chat_id),authorId:Number(r.author_id),text:r.text||'',reactions:r.reactions||{},createdAt:r.created_at};if(r.file_data)m.file={data:r.file_data,name:r.file_name,size:r.file_size,type:r.file_type};if(r.voice_url)m.voice={url:r.voice_url,duration:r.voice_duration||0};if(r.sticker_url)m.stickerUrl=r.sticker_url;if(r.reply_to)m.replyTo=Number(r.reply_to);return m;}
 function msgToRow(m){return {id:m.id,chat_id:m.chatId,author_id:m.authorId,text:m.text||'',file_data:m.file?m.file.data:null,file_name:m.file?m.file.name:null,file_size:m.file?m.file.size:null,file_type:m.file?m.file.type:null,voice_url:m.voice?m.voice.url:null,voice_duration:m.voice?m.voice.duration:null,sticker_url:m.stickerUrl||null,reply_to:m.replyTo||null,reactions:m.reactions||{},created_at:m.createdAt};}
@@ -376,20 +386,13 @@ const lastSeen=id=>db.presence[id]||0;
 async function loadAll(){
   let {data:users,error:eu}=await sb.from('users').select('*');
   if(eu)throw new Error('чтение users: '+eu.message);
-  if(!users||users.length===0){
-    const adminId=await uniqueId('users');
-    const admin={id:adminId,username:'admin',password:hashStr('admin123'),name:'Администратор',role:'admin',color:'#6366f1',sound:true,bio:'',createdAt:Date.now()};
-    const {error:ae}=await sb.from('users').insert(userToRow(admin));
-    if(ae)throw new Error('создание admin: '+ae.message);
-    users=[userToRow(admin)];
-  }
   const [chatsR,membersR,msgsR,presR,packsR,stickR,upR]=await Promise.all([
     sb.from('chats').select('*'),sb.from('chat_members').select('*'),
     sb.from('messages').select('*').order('created_at',{ascending:true}),
     sb.from('presence').select('*'),sb.from('sticker_packs').select('*'),
     sb.from('stickers').select('*'),sb.from('user_packs').select('*')
   ]);
-  db.users=users.map(userFromRow);
+  db.users=(users||[]).map(userFromRow);
   db.chats=(chatsR.data||[]).map(c=>({id:Number(c.id),type:c.type,name:c.name||null,description:c.description||'',avatar_url:c.avatar_url||null,createdAt:c.created_at}));
   db.memberRows=(membersR.data||[]).map(m=>({chat_id:Number(m.chat_id),user_id:Number(m.user_id),last_read:m.last_read,muted:!!m.muted}));
   db.messages=(msgsR.data||[]).map(normMsg);
@@ -398,7 +401,6 @@ async function loadAll(){
   db.stickers=(stickR.data||[]).map(x=>({id:Number(x.id),packId:Number(x.pack_id),imageUrl:x.image_url,emoji:x.emoji||'',createdAt:x.created_at}));
   db.userPacks=(upR.data||[]).map(x=>({userId:Number(x.user_id),packId:Number(x.pack_id),addedAt:x.added_at}));
 }
-async function writeTest(){const ins=await sb.from('presence').upsert({user_id:1,last_seen:1},{onConflict:'user_id'});if(ins.error)throw new Error('запись в базу недоступна: '+ins.error.message);const del=await sb.from('presence').delete().eq('user_id',1);if(del.error)throw new Error('удаление из базы недоступно: '+del.error.message);}
 
 let typingChan=null;
 function setupRealtime(){
@@ -429,8 +431,6 @@ async function syncStickers(){
   db.userPacks=(u.data||[]).map(x=>({userId:Number(x.user_id),packId:Number(x.pack_id),addedAt:x.added_at}));
   if(!$('#stickerPanel').classList.contains('hidden'))renderStickerPanel();
 }
-/* Все уведомления о сообщениях приходят ТОЛЬКО через push (sw.js) — всегда,
-   независимо от состояния приложения. Внутри — только звук (если включён и чат не в mute). */
 function onIncoming(m){
   if(m.authorId===meId)return;
   if(state.activeChat===m.chatId&&document.hasFocus()){markRead(m.chatId);}
@@ -487,7 +487,6 @@ document.addEventListener('click',()=>{try{actx&&actx.state==='suspended'&&actx.
 function markRead(chatId){if(!meId)return;const arr=db.messages.filter(m=>m.chatId===chatId);if(!arr.length)return;const last=arr[arr.length-1].createdAt;let row=db.memberRows.find(r=>r.chat_id===chatId&&r.user_id===meId);if(row&&row.last_read>=last)return;const ts=Math.max(Date.now(),last);if(row)row.last_read=ts;else{row={chat_id:chatId,user_id:meId,last_read:ts,muted:false};addMember(row);}sb.from('chat_members').upsert({chat_id:chatId,user_id:meId,last_read:ts},{onConflict:'chat_id,user_id'}).then(r=>dbLog('прочтение',r));}
 function unreadCount(chatId){const lr=lastReadOf(meId,chatId);return db.messages.filter(m=>m.chatId===chatId&&m.authorId!==meId&&m.createdAt>lr).length;}
 
-/* ======= Mute чата — без уведомлений ======= */
 async function toggleMute(chatId){
   const r=db.memberRows.find(r=>r.chat_id===chatId&&r.user_id===meId);
   if(!r)return;
@@ -568,6 +567,7 @@ function startDM(userId){let chat=db.chats.find(c=>{const ms=membersOf(c.id);ret
 async function sendMessage(){
   const ta=$('#msgInput');const text=ta.value.trim();const f=state.pendingFile;
   if(!text&&!f)return;if(!state.activeChat||activeOtherGone())return;
+  if(text.length>4000){showPlate('Сообщение слишком длинное (максимум 4000 символов)','error');return;}
   const mid=await uniqueId('messages');
   const m={id:mid,chatId:state.activeChat,authorId:meId,text,createdAt:Date.now(),reactions:{}};
   if(f)m.file={data:f.data,name:f.name,size:f.size,type:f.type};
@@ -657,6 +657,7 @@ async function savePack(){
   const d=state.packDraft;if(!d)return;
   const name=(d.name||'').trim();
   if(!name||!d.items.length)return;
+  if(name.length>30){showPlate('Название набора — максимум 30 символов','error');return;}
   try{
     const packId=await uniqueId('sticker_packs');
     let previewUrl=null;const rows=[];
@@ -764,56 +765,44 @@ function resolveConfirm(v){if(confirmRes){confirmRes(v);confirmRes=null;}closeMo
 function openAccountPanel(){
   const cur=me();
   const others=getAccountIds().filter(id=>id!==meId).map(id=>db.users.find(u=>u.id===id)).filter(Boolean);
-  const rememberedMe=isRemembered(meId);
   openModal(`
    <div class="adm-head"><h2 class="m-title">Аккаунты</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div>
    <button class="btn btn--ghost btn--block" data-action="profile" style="margin-top:14px">${I.info}<span>Профиль и настройки</span></button>
-   <h3 class="m-subtitle">Переключить аккаунт</h3>
+   <h3 class="m-subtitle">Другой аккаунт</h3>
+   <p class="m-text-p" style="font-size:12.5px">Из соображений безопасности для входа в другой аккаунт нужно ввести его пароль.</p>
    <div class="user-list">
-     ${cur?`<div class="user-row user-row--adm">${avatarHtml(cur,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(cur.name)} <span class="role-badge role-badge--you">текущий</span></div><div class="ur-sub">@${esc(cur.username)} · #${cur.id}${rememberedMe?'':' · временная сессия'}</div></div></div>`:''}
-     ${others.map(u=>`<div class="user-row" data-action="switch-account" data-id="${u.id}">${avatarHtml(u,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)} · #${u.id}</div></div></div>`).join('')||'<p class="m-empty">Других аккаунтов пока нет</p>'}
+     ${cur?`<div class="user-row user-row--adm">${avatarHtml(cur,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(cur.name)} <span class="role-badge role-badge--you">текущий</span></div><div class="ur-sub">@${esc(cur.username)} · #${cur.id}</div></div></div>`:''}
+     ${others.map(u=>`<div class="user-row" data-action="switch-account" data-id="${u.id}">${avatarHtml(u,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)} · #${u.id}</div></div></div>`).join('')||'<p class="m-empty">Других аккаунтов нет</p>'}
    </div>
-   <button class="btn btn--block" data-action="add-account" style="margin-top:14px">${I.plus}<span>Добавить аккаунт</span></button>
+   <button class="btn btn--block" data-action="add-account" style="margin-top:14px">${I.plus}<span>Войти в другой аккаунт</span></button>
    <div style="display:flex;gap:10px;margin-top:10px">
-     <button class="btn btn--ghost" data-action="logout-current" style="flex:1">Выйти из этого</button>
-     <button class="btn btn--danger" data-action="logout-all" style="flex:1">Выйти из всех</button>
+     <button class="btn btn--ghost" data-action="logout-current" style="flex:1">Выйти</button>
+     <button class="btn btn--danger" data-action="logout-all" style="flex:1">Выйти везде</button>
    </div>
   `,true);
 }
 async function switchAccount(id){
-  id=Number(id);
-  if(id===meId){closeModal();return;}
-  if(!db.users.some(u=>u.id===id)){showPlate('Аккаунт недоступен','error');return;}
+  if(Number(id)===meId){closeModal();return;}
   await clearPres(meId);
+  await sb.auth.signOut();
   sessionStorage.removeItem('at_session');
-  localStorage.setItem('at_active',String(id));
-  rememberAccount(id);
-  meId=id;
-  state.activeChat=null;state.replyTo=null;state.pendingFile=null;
-  const ta=$('#msgInput');if(ta)ta.value='';
-  closeModal();
-  await touchPres();trySubscribePush();
-  render();
-  const u=me();showPlate(u?('Аккаунт: '+u.name):'Аккаунт переключён','ok');
+  meId=null;state.activeChat=null;
+  closeModal();render();
+  showPlate('Введите пароль другого аккаунта','ok');
 }
-function addAccount(){closeModal();clearPres(meId);meId=null;state.activeChat=null;render();}
+function addAccount(){(async()=>{await clearPres(meId);await sb.auth.signOut();sessionStorage.removeItem('at_session');meId=null;state.activeChat=null;closeModal();render();})();}
 async function logoutCurrent(){
   const id=meId;
   await clearPres(id);
   sessionStorage.removeItem('at_session');
-  if(isRemembered(id)){
-    forgetAccount(id);
-    if(localStorage.getItem('at_active')===String(id))localStorage.removeItem('at_active');
-  }
-  const others=getAccountIds();
-  if(others.length){closeModal();await switchAccount(others[0]);return;}
+  if(isRemembered(id)){forgetAccount(id);if(localStorage.getItem('at_active')===String(id))localStorage.removeItem('at_active');}
+  await sb.auth.signOut();
   meId=null;state.activeChat=null;closeModal();render();
 }
 async function logoutAll(){
   await clearPres(meId);
-  localStorage.removeItem('at_accounts');
-  localStorage.removeItem('at_active');
-  sessionStorage.removeItem('at_session');
+  localStorage.removeItem('at_accounts');localStorage.removeItem('at_active');sessionStorage.removeItem('at_session');
+  await sb.auth.signOut();
   meId=null;state.activeChat=null;closeModal();render();
 }
 
@@ -880,24 +869,19 @@ async function addGroupMember(userId){
 function openAdmin(){const u=me();if(!u||u.role!=='admin')return;const users=[...db.users].sort((a,b)=>a.createdAt-b.createdAt);openModal(`<div class="adm-head"><h2 class="m-title">🛡 Админ-панель</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div><p class="m-text-p">Аккаунты создаются только отсюда. Передайте логин и пароль пользователю — сам он зарегистрироваться не сможет.</p>${state.lastCreds?`<div class="creds-box"><div><b>Аккаунт создан ✓</b><div class="creds-line">@${esc(state.lastCreds.username)} · Пароль: <code>${esc(state.lastCreds.password)}</code></div></div><button class="btn btn-sm" data-action="copy-creds">Копировать</button></div>`:''}<form data-form="create-account" class="adm-form"><div class="f-row"><label>Имя<input class="inp" name="name" required maxlength="40" placeholder="Иван Петров"></label><label>@юзернейм<input class="inp" name="username" required maxlength="20" pattern="[a-zA-Z0-9._,-]{2,20}" placeholder="ivan_2024"></label></div><div class="f-row"><label>Пароль<input class="inp" name="password" required minlength="4" maxlength="30" placeholder="минимум 4 символа"></label><label class="chk"><input type="checkbox" name="isadmin"><span>Администратор</span></label></div><span class="field-hint">Юзернейм: латиница (a-z A-Z), цифры и символы . , _ - · 2-20 символов</span><div id="admErr" class="form-err"></div><button class="btn btn--block" type="submit" style="margin-top:6px">Создать аккаунт</button></form><div class="adm-stats">Пользователей: ${db.users.length} · Сообщений: ${db.messages.length}</div><h3 class="m-subtitle">Аккаунты</h3><div class="user-list">${users.map(x=>`<div class="user-row user-row--adm">${avatarHtml(x,'avatar--sm',{showOnline:true})}<div class="ur-info"><div class="ur-name">${esc(x.name)} ${x.role==='admin'?'<span class="role-badge">admin</span>':''}${x.id===meId?'<span class="role-badge role-badge--you">вы</span>':''}</div><div class="ur-sub">@${esc(x.username)} · #${x.id} · ${isOnline(x.id)?'<span class="sub-online">в сети</span>':(lastSeen(x.id)?'был(а) '+fmtTime(lastSeen(x.id)):'не заходил(а)')}</div></div>${x.id!==meId?`<button class="icon-btn ma-btn--danger" data-action="del-account" data-id="${x.id}" title="Удалить аккаунт">${I.trash}</button>`:''}</div>`).join('')}</div>`,true);}
 async function handleCreateAccount(f){
   if(creatingAccount)return;
-  const err=$('#admErr');const name=f.name.value.trim();const username=f.username.value.trim();const pass=f.password.value;const isAdmin=f.isadmin.checked;
+  const err=$('#admErr');
+  const name=f.name.value.trim();const username=f.username.value.trim().toLowerCase();
+  const pass=f.password.value;const isAdmin=f.isadmin.checked;
   if(!name){err.textContent='Укажите имя';return;}
   if(!UNAME_RE.test(username)){err.textContent=UNAME_HINT;return;}
-  if(db.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){err.textContent='Такой @юзернейм уже занят';return;}
+  if(db.users.some(u=>u.username===username)){err.textContent='Такой @юзернейм уже занят';return;}
   if(pass.length<4){err.textContent='Пароль — минимум 4 символа';return;}
   creatingAccount=true;
   try{
-    const uid=await uniqueId('users');
-    const nu={id:uid,username,password:hashStr(pass),name,role:isAdmin?'admin':'user',color:colorFor(name+username),bio:'',createdAt:Date.now(),sound:true};
-    const cid=await uniqueId('chats');
-    const chat={id:cid,type:'dm',name:null,description:'',avatar_url:null,createdAt:Date.now()};const now=Date.now();
-    const wmId=await uniqueId('messages');
-    const wm={id:wmId,chatId:cid,authorId:meId,text:`Привет, ${name}! 👋 Ваш аккаунт создан. Добро пожаловать в Asie_Telegraph!\n\nВаш ID: ${uid}\nВаш @юзернейм: @${username}`,createdAt:Date.now(),reactions:{}};
-    const r1=await sb.from('users').insert(userToRow(nu));if(dbErr('создание пользователя',r1))return;
-    const r2=await sb.from('chats').insert({id:cid,type:'dm',created_at:now});if(dbErr('создание чата',r2))return;
-    const r3=await sb.from('chat_members').insert([{chat_id:cid,user_id:meId,last_read:now,muted:false},{chat_id:cid,user_id:uid,last_read:0,muted:false}]);if(dbErr('создание участников',r3))return;
-    const r4=await sb.from('messages').insert(msgToRow(wm));if(dbErr('отправка приветствия',r4))return;
-    addUser(nu);addChat(chat);addMember({chat_id:cid,user_id:meId,last_read:now,muted:false});addMember({chat_id:cid,user_id:uid,last_read:0,muted:false});addMsg(wm);
+    const {data,error}=await sb.functions.invoke('register',{body:{username,password:pass,name,role:isAdmin?'admin':'user'}});
+    if(error||data?.error){err.textContent=(error?.message||data?.error||'Ошибка создания');return;}
+    const {data:users}=await sb.from('users').select('*');
+    db.users=(users||[]).map(userFromRow);
     state.lastCreds={username,password:pass};
     render();openAdmin();
   } finally { creatingAccount=false; }
@@ -924,10 +908,10 @@ function openProfile(){const u=me();openModal(`<div class="adm-head"><h2 class="
   </form>`,true);}
 async function handleEditProfile(f){
   const u=me();const err=$('#profErr');
-  const name=f.name.value.trim();const username=f.username.value.trim();const bio=f.bio.value.trim();
+  const name=f.name.value.trim();const username=f.username.value.trim().toLowerCase();const bio=f.bio.value.trim();
   if(!name){err.textContent='Укажите имя';return;}
   if(!UNAME_RE.test(username)){err.textContent=UNAME_HINT;return;}
-  if(db.users.some(x=>x.username.toLowerCase()===username.toLowerCase()&&x.id!==meId)){err.textContent='Этот @юзернейм уже занят';return;}
+  if(db.users.some(x=>x.username===username&&x.id!==meId)){err.textContent='Этот @юзернейм уже занят';return;}
   if(bio.length>200){err.textContent='О себе — максимум 200 символов';return;}
   const avatar=u.avatar_url||null;
   const r=await sb.from('users').update({name,username,bio,avatar_url:avatar}).eq('id',meId);
@@ -974,20 +958,29 @@ function openPwaHelp(){
     <h3 class="m-subtitle">Как установить</h3>${steps}`,true);
 }
 
-function handleLogin(f){
+/* === ВХОД через Supabase Auth + rate limiting === */
+async function handleLogin(f){
   const un=f.username.value.trim().toLowerCase();
-  const u=db.users.find(x=>x.username.toLowerCase()===un);
-  if(!u||u.password!==hashStr(f.password.value)){$('#loginError').textContent='Неверный @юзернейм или пароль';return;}
-  meId=u.id;
+  const pw=f.password.value;
   const remember=f.remember?f.remember.checked:true;
-  if(remember){rememberAccount(u.id);localStorage.setItem('at_active',String(u.id));sessionStorage.removeItem('at_session');}
-  else{sessionStorage.setItem('at_session',String(u.id));}
+  const email=un+AUTH_DOMAIN;
+  const guard=await loginGuard('check');
+  if(guard.allowed===false){$('#loginError').textContent=`Слишком много попыток входа. Повторите через ${guard.retryAfter} сек.`;return;}
+  const rl=rlCheck();
+  if(!rl.allowed){$('#loginError').textContent=`Слишком много попыток входа. Повторите через ${rl.retryAfter} сек.`;return;}
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pw});
+  if(error){await loginGuard('fail');rlFail();$('#loginError').textContent='Неверный @юзернейм или пароль';return;}
+  await loginGuard('success');rlClear();
+  const prof=db.users.find(x=>x.auth_id===data.user.id);
+  if(!prof){$('#loginError').textContent='Профиль не найден. Обратитесь к администратору.';await sb.auth.signOut();return;}
+  meId=prof.id;
+  if(remember){rememberAccount(prof.id);localStorage.setItem('at_active',String(prof.id));sessionStorage.removeItem('at_session');}
+  else{sessionStorage.setItem('at_session',String(prof.id));}
   state.activeChat=null;state.replyTo=null;state.pendingFile=null;
   $('#loginError').textContent='';f.reset();
   touchPres();render();trySubscribePush();
-  showPlate('Привет, '+u.name+'! 👋','ok');
+  showPlate('Привет, '+prof.name+'! 👋','ok');
 }
-/* Включение push — без new Notification, подтверждение плашкой */
 async function notifToggle(){
   if(!('Notification'in window)){showPlate('Браузер не поддерживает уведомления','error');return;}
   if(Notification.permission==='default'){
@@ -995,8 +988,7 @@ async function notifToggle(){
     if(p==='granted'){trySubscribePush();showPlate('Push-уведомления включены','ok');}
     renderSidebar();
   }else if(Notification.permission==='granted'){
-    trySubscribePush();
-    showPlate('Push-уведомления работают','ok');
+    trySubscribePush();showPlate('Push-уведомления работают','ok');
   }else{
     showPlate('Уведомления заблокированы — разрешите их в настройках браузера','error');
   }
@@ -1092,7 +1084,6 @@ document.addEventListener('submit',e=>{const f=e.target,kind=f.dataset.form;if(!
   if(kind==='group-desc'){const chat=db.chats.find(c=>c.id===state.activeChat);if(chat){const desc=(f.desc.value||'').slice(0,500);chat.description=desc;sb.from('chats').update({description:desc}).eq('id',chat.id).then(r=>{if(!dbErr('описание',r)){render();closeModal();showPlate('Изменения сохранены','ok');}});}}
 });
 document.addEventListener('change',e=>{
-  /* Переключатель звука — без уведомлений */
   if(e.target.matches('[data-action="toggle-sound"]')){const u=me();if(u){u.sound=e.target.checked;sb.from('users').update({sound:u.sound}).eq('id',u.id).then(r=>dbErr('настройка звука',r));}}
   if(e.target.matches('[data-action="toggle-mute-check"]')){if(state.activeChat)toggleMute(state.activeChat);}
   if(e.target.id==='packPublic'&&state.packDraft){state.packDraft.isPublic=e.target.checked;}
@@ -1137,8 +1128,14 @@ setInterval(()=>{if(me()){renderSidebar();updateHeader();}},15000);
 $('#newChatBtn').innerHTML=I.plus;$('#attachBtn').innerHTML=I.clip;$('#emojiBtn').innerHTML=I.smile;$('#stickerBtn').innerHTML=I.sticker;$('#voiceBtn').innerHTML=I.mic;$('#sendBtn').innerHTML=I.send;
 
 (async function init(){
-  try{await loadAll();await writeTest();}
-  catch(e){$('#loadingView').innerHTML=`<div class="load-err">⚠️ Не удалось подключиться к базе данных<br><br><span style="font-size:13px;color:#f87171">${esc(e.message||'Неизвестная ошибка')}</span><br><br><span style="opacity:.6;font-size:12px">Скопируйте этот текст и покажите разработчику.</span><div class="copyright">by APC · As'ie Program Corporation</div></div>`;return;}
+  try{
+    await loadAll();
+    // Восстанавливаем сессию Supabase Auth
+    const {data:{session}}=await sb.auth.getSession();
+    if(session){const prof=db.users.find(x=>x.auth_id===session.user.id);if(prof)meId=prof.id;}
+  }catch(e){
+    $('#loadingView').innerHTML=`<div class="load-err">⚠️ Не удалось подключиться к базе данных<br><br><span style="font-size:13px;color:#f87171">${esc(e.message||'Неизвестная ошибка')}</span><br><br><span style="opacity:.6;font-size:12px">Скопируйте этот текст и покажите разработчику.</span><div class="copyright">by APC · As'ie Program Corporation</div></div>`;return;
+  }
   if(meId&&!me()){
     forgetAccount(meId);
     if(localStorage.getItem('at_active')===String(meId))localStorage.removeItem('at_active');
