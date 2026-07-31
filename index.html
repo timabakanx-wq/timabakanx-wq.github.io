@@ -563,8 +563,7 @@ function updateVoiceBtn(){const btn=$('#voiceBtn');const sendBtn=$('#sendBtn');i
 function updateSendBtn(){const gone=activeOtherGone();$('#sendBtn').disabled=gone||!($('#msgInput').value.trim()||state.pendingFile);}
 
 function openChat(chatId){state.activeChat=chatId;state.replyTo=null;markRead(chatId);state.forceBottom=true;closeStickerPanel();render();document.body.classList.add('chat-open');if(window.innerWidth>760)$('#msgInput').focus();}
-function startDM(userId){let chat=db.chats.find(c=>{const ms=membersOf(c.id);return c.type==='dm'&&ms.includes(meId)&&ms.includes(userId);});if(!chat){(async()=>{const cid=await uniqueId('chats');const nc={id:cid,type:'dm',name:null,description:'',avatar_url:null,createdAt:Date.now()};const now=Date.now();addChat(nc);addMember({chat_id:cid,user_id:meId,last_read:now,muted:false});addMember({chat_id:cid,user_id:userId,last_read:0,muted:false});const r1=await sb.from('chats').insert({id:cid,type:'dm',created_at:now});if(dbErr('создание чата',r1))return;const r2=await sb.from('chat_members').insert([{chat_id:cid,user_id:meId,last_read:now,muted:false},{chat_id:cid,user_id:userId,last_read:0,muted:false}]);if(dbErr('создание участников',r2))return;closeModal();openChat(cid);})();return;}closeModal();openChat(chat.id);}
-async function sendMessage(){
+function startDM(userId){let chat=db.chats.find(c=>{const ms=membersOf(c.id);return c.type==='dm'&&ms.includes(meId)&&ms.includes(userId);});if(!chat){(async()=>{const cid=await uniqueId('chats');const nc={id:cid,type:'dm',name:null,description:'',avatar_url:null,createdAt:Date.now()};const now=Date.now();const r1=await sb.from('chats').insert({id:cid,type:'dm',created_at:now});if(dbErr('создание чата',r1))return;const r2a=await sb.from('chat_members').insert({chat_id:cid,user_id:meId,last_read:now,muted:false});if(dbErr('создание участников',r2a))return;const r2b=await sb.from('chat_members').insert({chat_id:cid,user_id:userId,last_read:0,muted:false});if(dbErr('создание участников',r2b))return;addChat(nc);addMember({chat_id:cid,user_id:meId,last_read:now,muted:false});addMember({chat_id:cid,user_id:userId,last_read:0,muted:false});closeModal();openChat(cid);})();return;}closeModal();openChat(chat.id);}async function sendMessage(){
   const ta=$('#msgInput');const text=ta.value.trim();const f=state.pendingFile;
   if(!text&&!f)return;if(!state.activeChat||activeOtherGone())return;
   if(text.length>4000){showPlate('Сообщение слишком длинное (максимум 4000 символов)','error');return;}
@@ -821,13 +820,14 @@ async function createGroup(){
   const cid=await uniqueId('chats');
   const chat={id:cid,type:'group',name,description:'',avatar_url:null,createdAt:Date.now()};const now=Date.now();
   const memberIds=[meId,...state.groupSel];
-  const memberRows=memberIds.map((id,i)=>({chat_id:cid,user_id:id,last_read:i===0?now:0,muted:false}));
   const wmId=await uniqueId('messages');
   const wm={id:wmId,chatId:cid,authorId:meId,text:`Группа «${name}» создана 🎉`,createdAt:Date.now(),reactions:{}};
   const r1=await sb.from('chats').insert({id:cid,type:'group',name,description:'',created_at:now});if(dbErr('создание группы',r1))return;
-  const r2=await sb.from('chat_members').insert(memberRows);if(dbErr('добавление участников',r2))return;
+  const r2a=await sb.from('chat_members').insert({chat_id:cid,user_id:meId,last_read:now,muted:false});if(dbErr('добавление участников',r2a))return;
+  const others=memberIds.filter(id=>id!==meId).map(id=>({chat_id:cid,user_id:id,last_read:0,muted:false}));
+  if(others.length){const r2b=await sb.from('chat_members').insert(others);if(dbErr('добавление участников',r2b))return;}
   const r3=await sb.from('messages').insert(msgToRow(wm));if(dbErr('сообщение',r3))return;
-  addChat(chat);memberRows.forEach(r=>addMember(r));addMsg(wm);
+  addChat(chat);addMember({chat_id:cid,user_id:meId,last_read:now,muted:false});others.forEach(r=>addMember(r));addMsg(wm);
   state.groupSel=new Set();state.groupName='';
   closeModal();openChat(cid);
 }
