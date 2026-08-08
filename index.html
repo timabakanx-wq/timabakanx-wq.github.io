@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Asie_Telegraph — мессенджер</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#6366f1">
@@ -18,8 +18,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/cyrillic-800-normal.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#0b1120;--panel:#111a2e;--panel2:#1a2540;--border:rgba(148,163,184,.13);--text:#e6edf7;--muted:#8ea0bd;--accent:#6366f1;--accent2:#8b5cf6;--grad:linear-gradient(135deg,#6366f1,#8b5cf6);--green:#22c55e;--red:#ef4444;}
-*{box-sizing:border-box}html,body{height:100%}
+:root{--bg:#0b1120;--panel:#111a2e;--panel2:#1a2540;--border:rgba(148,163,184,.13);--text:#e6edf7;--muted:#8ea0bd;--accent:#6366f1;--accent2:#8b5cf6;--grad:linear-gradient(135deg,#6366f1,#8b5cf6);--green:#22c55e;--red:#ef4444;--kb-offset:0px;}
+*{box-sizing:border-box}html,body{height:100%;overflow:hidden}
 body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);background:radial-gradient(1000px 600px at 88% -10%,rgba(99,102,241,.15),transparent 60%),radial-gradient(800px 500px at -10% 110%,rgba(139,92,246,.11),transparent 60%),var(--bg);}
 .hidden{display:none!important}button{font-family:inherit}.icon{width:19px;height:19px;display:block}
 ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:rgba(148,163,184,.18);border-radius:8px;border:2px solid transparent;background-clip:content-box}::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.34);background-clip:content-box}
@@ -48,7 +48,8 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .btn--danger{background:linear-gradient(135deg,#ef4444,#dc2626)}.btn--danger:hover{box-shadow:0 10px 26px rgba(239,68,68,.35)}
 .btn-sm{padding:7px 12px;font-size:13px;border-radius:10px}.form-err{color:#f87171;font-size:13px;min-height:19px;margin-top:9px}
 .copyright{text-align:center;color:var(--muted);font-size:11.5px;margin-top:22px;opacity:.6;letter-spacing:.4px}
-.app{display:flex;height:100dvh;overflow:hidden}.sidebar{width:342px;min-width:300px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.app{display:flex;height:100dvh;overflow:hidden}
+.sidebar{width:342px;min-width:300px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column}
 .sb-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 8px}
 .brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:17.5px;letter-spacing:-.3px}
 .brand-logo{width:34px;height:34px;border-radius:10px;background:var(--grad);display:grid;place-items:center;box-shadow:0 5px 16px rgba(99,102,241,.4)}.brand-logo svg{width:19px;height:19px}
@@ -60,7 +61,7 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .chat-item:hover{background:rgba(148,163,184,.07)}.chat-item.active{background:linear-gradient(135deg,rgba(99,102,241,.24),rgba(139,92,246,.16))}
 .avatar{--c:#6366f1;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(0,0,0,.18)),var(--c);display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;position:relative;flex-shrink:0;user-select:none;overflow:hidden}
 .avatar img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;border-radius:50%;z-index:1}
-.avatar--xs{width:34px;height:34px;font-size:12px}.avatar--sm{width:38px;height:38px;font-size:13px}.avatar--md{width:42px;height:42px;font-size:14px}.avatar--lg{width:64px;height:64px;font-size:22px}.avatar--xl{width:92px;height:92px;font-size:30px}
+.avatar--xs{width:34px;height:34px;font-size:12px}.avatar--sm{width:38px;height:38px;font-size:13px}.avatar--md{width:42px;height:42px;font-size:14px}.avatar--lg{width:64px;height:64px;font-size:22px}.avatar--xl{width:92px;height:92px;font-size:22px}
 .avatar--group{background:linear-gradient(135deg,rgba(99,102,241,.55),rgba(139,92,246,.55)),var(--c)}
 .avatar--group .icon{width:55%;height:55%}
 .avatar--click{cursor:pointer;transition:.18s}.avatar--click:hover{transform:scale(1.05)}
@@ -70,20 +71,23 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .online{position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:var(--green);border:2.5px solid var(--panel);z-index:3}
 .ci-body{flex:1;min-width:0}.ci-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .ci-name{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ci-time{font-size:11.5px;color:var(--muted);flex-shrink:0}
-.mute-ic{display:inline-flex;color:var(--muted);flex-shrink:0}.mute-ic .icon{width:13px;height:13px}
 .ci-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:3px}.ci-last{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .badge{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--grad);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0;animation:pop .25s}
 .list-empty{padding:34px 16px;text-align:center;color:var(--muted);font-size:14px;line-height:1.7}.list-empty span{font-size:12.5px;opacity:.7}
 .sb-foot{border-top:1px solid var(--border);padding:10px 12px;display:flex;align-items:center;gap:6px}
 .me-chip{display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding:6px 8px;border-radius:12px;cursor:pointer;transition:.15s}.me-chip:hover{background:rgba(148,163,184,.08)}
 .me-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}.me-un{font-size:12px;color:var(--muted)}
-.role-badge{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;background:rgba(139,92,246,.22);color:#c4b5fd;padding:2px 6px;border-radius:6px}.role-badge--you{background:rgba(34,197,94,.16);color:#86efac}
+.role-badge{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;background:rgba(139,92,246,.22);color:#c4b5fd;padding:2px 6px;border-radius:6px}
+.role-badge--owner{background:rgba(234,179,8,.2);color:#fcd34d}
+.role-badge--you{background:rgba(34,197,94,.16);color:#86efac}
+.admin-title{font-size:10px;font-weight:700;background:rgba(139,92,246,.25);color:#ddd6fe;padding:2px 7px;border-radius:6px;letter-spacing:.3px}
 .foot-actions{display:flex;gap:3px}.icon-btn{width:38px;height:38px;border-radius:11px;border:none;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:.15s;flex-shrink:0}
-.icon-btn:hover{background:rgba(148,163,184,.13);color:var(--text)}.icon-btn.on{color:#86efac}.icon-btn.muted-on{color:#f87171}.icon-btn--sm{width:30px;height:30px;border-radius:9px}.icon-btn--sm .icon{width:16px;height:16px}
+.icon-btn:hover{background:rgba(148,163,184,.13);color:var(--text)}.icon-btn.on{color:#86efac}.icon-btn--sm{width:30px;height:30px;border-radius:9px}.icon-btn--sm .icon{width:16px;height:16px}
 .chat-area{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;background:var(--bg)}
 .empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}.empty .big{font-size:54px;margin-bottom:14px;animation:float 3.5s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-9px)}}.empty h3{color:var(--text);margin:0 0 6px;font-size:19px}.empty p{margin:0;font-size:14px}
-.chat-view{flex:1;display:flex;flex-direction:column;min-height:0}.chat-head{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--border)}
+.chat-view{flex:1;display:flex;flex-direction:column;min-height:0}
+.chat-head{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--border)}
 .back-btn{display:none}.ch-info{flex:1;min-width:0}.ch-click{display:flex;align-items:center;gap:12px;cursor:pointer;flex:1;min-width:0}
 .ch-name{font-weight:700;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ch-sub{font-size:12.5px;color:var(--muted);margin-top:1px}
 .sub-online{color:#4ade80}.typing{color:#a78bfa}.tdots i{display:inline-block;width:3.5px;height:3.5px;border-radius:50%;background:currentColor;margin-left:2.5px;animation:blink 1.2s infinite}
@@ -96,7 +100,7 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .msg.in .bubble{background:var(--panel2);border-bottom-left-radius:16px}.msg.in.last .bubble{border-bottom-left-radius:5px}
 .msg.own .bubble{background:linear-gradient(135deg,#5b6bf5,#8156f0);border-bottom-right-radius:16px}.msg.own.last .bubble{border-bottom-right-radius:5px}
 .bubble--sticker{background:transparent!important;box-shadow:none!important;padding:2px!important}
-.m-name{font-size:13px;font-weight:700;margin:0 0 2px}.m-text{font-size:14.5px;line-height:1.45;white-space:pre-wrap}.m-text a{color:#93c5fd}.msg.own .m-text a{color:#e0e7ff}
+.m-name{font-size:13px;font-weight:700;margin:0 0 2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.m-text{font-size:14.5px;line-height:1.45;white-space:pre-wrap}.m-text a{color:#93c5fd}.msg.own .m-text a{color:#e0e7ff}
 .m-meta{display:flex;align-items:center;gap:4px;justify-content:flex-end;font-size:11px;color:var(--muted);margin-top:3px}.msg.own .m-meta{color:rgba(255,255,255,.78)}
 .bubble--sticker .m-meta{background:rgba(13,21,38,.7);border-radius:10px;padding:2px 7px;width:max-content;margin-left:auto}
 .checks{display:inline-flex;color:rgba(255,255,255,.65)}.checks .icon{width:15px;height:15px}.checks.read{color:#67e8f9}
@@ -132,7 +136,9 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .rchip span{font-size:11.5px;font-weight:700;color:var(--muted)}.rchip:hover{background:rgba(148,163,184,.22);transform:scale(1.07)}
 .rchip.mine{background:rgba(99,102,241,.3);border-color:rgba(129,140,248,.6)}.rchip.mine span{color:#c7d2fe}@keyframes pop{from{transform:scale(.55);opacity:0}}
 .flash{animation:flashA 1.2s}@keyframes flashA{0%,30%{box-shadow:0 0 0 3px rgba(139,92,246,.6)}100%{box-shadow:0 0 0 3px transparent}}
-.composer-wrap{background:var(--panel);border-top:1px solid var(--border);padding:10px 16px 14px}
+
+/* === Composer с поддержкой клавиатуры === */
+.composer-wrap{background:var(--panel);border-top:1px solid var(--border);padding:10px 16px calc(14px + env(safe-area-inset-bottom));padding-bottom:calc(14px + env(safe-area-inset-bottom) + var(--kb-offset));transition:padding-bottom .15s ease}
 .reply-bar,.attach-bar,.rec-bar{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:7px 10px;margin-bottom:9px;animation:msgIn .18s}
 .rec-bar{border-color:rgba(239,68,68,.55);background:rgba(239,68,68,.08)}
 .rb-ic{color:var(--accent2);display:grid;place-items:center}.rb-body{flex:1;min-width:0}
@@ -148,15 +154,19 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .send-btn{width:44px;height:44px;border-radius:50%;border:none;background:var(--grad);color:#fff;display:grid;place-items:center;cursor:pointer;transition:.18s;flex-shrink:0;box-shadow:0 6px 18px rgba(99,102,241,.38)}
 .send-btn:hover:not(:disabled){transform:scale(1.08)}.send-btn:disabled{opacity:.35;cursor:default;box-shadow:none}.send-btn .icon{width:20px;height:20px;transform:translateX(1px)}
 .send-btn--rec{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 6px 18px rgba(239,68,68,.38)}
-.picker{position:fixed;z-index:95;background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:8px;display:grid;grid-template-columns:repeat(8,34px);gap:2px;box-shadow:0 18px 55px rgba(0,0,0,.6);animation:pop .16s}
-.picker--react{grid-template-columns:repeat(10,34px)}.pk-e{width:34px;height:34px;border:none;background:transparent;font-size:20px;border-radius:9px;cursor:pointer;transition:transform .12s,background .12s;display:grid;place-items:center}
-.pk-e:hover{background:rgba(148,163,184,.15);transform:scale(1.24)}
-#stickerPanel{position:fixed;left:50%;transform:translateX(-50%);bottom:86px;width:min(430px,94vw);max-height:58vh;background:var(--panel2);border:1px solid var(--border);border-radius:18px;box-shadow:0 18px 55px rgba(0,0,0,.6);z-index:92;display:flex;flex-direction:column;overflow:hidden;animation:pop .18s}
-.sp-head{display:flex;align-items:center;gap:6px;padding:10px 12px;border-bottom:1px solid var(--border)}
-.sp-tabs{display:flex;gap:6px;flex:1}
-.sp-tab{padding:6px 14px;border-radius:9px;border:none;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
-.sp-tab.on{background:var(--grad);color:#fff}
-.sp-body{overflow-y:auto;padding:12px;flex:1}
+
+/* === Единая панель эмодзи/стикеров === */
+.emoji-panel{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom) + var(--kb-offset));width:min(430px,94vw);max-height:58vh;background:var(--panel2);border:1px solid var(--border);border-radius:18px 18px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.5);z-index:92;display:flex;flex-direction:column;overflow:hidden;animation:panelSlideUp .2s ease}
+@keyframes panelSlideUp{from{transform:translateX(-50%) translateY(100%)}to{transform:translateX(-50%) translateY(0)}}
+.ep-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border)}
+.ep-tabs{display:flex;gap:4px;background:#0d1526;border-radius:10px;padding:3px}
+.ep-tab{border:none;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;transition:.15s}
+.ep-tab.on{background:var(--grad);color:#fff}
+.ep-body{overflow-y:auto;padding:12px;flex:1}
+.ep-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.ep-item{width:100%;aspect-ratio:1;border:none;background:transparent;font-size:22px;border-radius:9px;cursor:pointer;transition:transform .12s,background .12s;display:grid;place-items:center}
+.ep-item:hover{background:rgba(148,163,184,.15);transform:scale(1.15)}
+/* Стикеры в панели */
 .sp-packrow{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--border)}
 .sp-pack{flex-shrink:0;width:64px;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--muted);font:inherit;font-size:11px;padding:0}
 .sp-pack img,.sp-pack-ph{width:56px;height:56px;object-fit:cover;border-radius:14px;display:block;margin:0 auto 5px;border:2px solid transparent;transition:.15s}
@@ -170,6 +180,7 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .sp-item img{width:100%;max-width:84px;height:auto;object-fit:contain;pointer-events:none}
 .sp-del{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(239,68,68,.92);color:#fff;display:grid;place-items:center;cursor:pointer;z-index:2}
 .sp-del .icon{width:12px;height:12px}
+
 .modal-back{position:fixed;inset:0;z-index:96;background:rgba(5,9,17,.66);backdrop-filter:blur(5px);display:grid;place-items:center;padding:18px;animation:fadeIn .18s}@keyframes fadeIn{from{opacity:0}}
 .modal{width:min(432px,100%);background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.6);animation:slideUp .26s cubic-bezier(.2,.9,.3,1.15);max-height:88vh;overflow-y:auto}
 .modal--wide{width:min(580px,100%)}.modal--sm{width:min(380px,100%)}@keyframes slideUp{from{opacity:0;transform:translateY(26px) scale(.96)}}
@@ -180,14 +191,22 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:9px}
 .chk{display:flex!important;align-items:center;gap:9px;font-size:13.5px!important;color:var(--text)!important;cursor:pointer;padding-top:20px}.chk input{width:17px;height:17px;accent-color:var(--accent);margin:0!important}
 .chk--row{margin:18px 0 4px;padding:0}.adm-stats{margin-top:15px;font-size:12.5px;color:var(--muted);text-align:center}
-.user-list{display:flex;flex-direction:column;gap:4px;margin-top:8px}.user-row{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:13px;cursor:pointer;transition:.14s}
-.user-row:hover{background:rgba(148,163,184,.08)}.user-row--adm{cursor:default}.ur-info{flex:1;min-width:0}.ur-name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.user-list{display:flex;flex-direction:column;gap:4px;margin-top:8px}.user-row{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:13px;transition:.14s}
+.user-row--click{cursor:pointer}.user-row--click:hover{background:rgba(148,163,184,.08)}
+.ur-info{flex:1;min-width:0}.ur-name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .ur-sub{font-size:12px;color:var(--muted);margin-top:2px}.m-empty{text-align:center;color:var(--muted);font-size:14px;line-height:1.7;margin:24px 0 10px}
 .prof-top{display:flex;align-items:center;gap:16px;margin-top:16px}.prof-name{font-weight:800;font-size:17px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .prof-id{font-family:'Menlo','Consolas',monospace;font-size:14px;font-weight:700;letter-spacing:1px;color:#c4b5fd;background:rgba(139,92,246,.14);padding:3px 9px;border-radius:8px;display:inline-block;margin-top:4px}
 .prof-bio{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:10px;white-space:pre-wrap;word-break:break-word}
 .grp-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;flex-shrink:0;transition:.15s;color:#fff}
 .grp-check.on{background:var(--grad);border-color:transparent}.grp-check .icon{width:13px;height:13px}
+.perm-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.perm-row>span:first-child{font-size:13.5px}
+.perm-toggle{display:flex;background:#0d1526;border-radius:10px;padding:3px;gap:2px}
+.perm-opt{border:none;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;transition:.15s}
+.perm-opt.on{background:var(--grad);color:#fff}
+.perm-val{font-size:12.5px;color:var(--muted)}
+.member-acts{display:flex;gap:6px;flex-shrink:0}
 .plate{position:fixed;inset:0;z-index:150;display:grid;place-items:center;pointer-events:none}
 .plate-card{pointer-events:auto;background:var(--panel2);border:1px solid var(--border);border-radius:20px;padding:24px 32px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 24px 70px rgba(0,0,0,.65);animation:platePop .32s cubic-bezier(.2,.9,.3,1.25);min-width:230px;max-width:min(420px,90vw)}
 .plate-ic{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff}
@@ -203,7 +222,7 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .pwa-num{width:26px;height:26px;border-radius:50%;background:var(--grad);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;flex-shrink:0}
 .pwa-body{font-size:13.5px;line-height:1.5}.pwa-body b{color:var(--text)}
 @media(max-width:760px){.sidebar{width:100%;border-right:none}.chat-area{position:fixed;inset:0;z-index:20;background:var(--bg);transform:translateX(103%);transition:transform .28s cubic-bezier(.2,.8,.3,1)}
-body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{padding:14px 12px 8px}.bubble-col{max-width:85%}.composer-wrap{padding:8px 10px 12px}.picker--react{grid-template-columns:repeat(5,34px)}.f-row{grid-template-columns:1fr}#stickerPanel{bottom:76px}}
+body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{padding:14px 12px 8px}.bubble-col{max-width:85%}.composer-wrap{padding:8px 10px calc(12px + env(safe-area-inset-bottom));padding-bottom:calc(12px + env(safe-area-inset-bottom) + var(--kb-offset))}.f-row{grid-template-columns:1fr}.emoji-panel{bottom:calc(76px + env(safe-area-inset-bottom) + var(--kb-offset))}.ep-grid{grid-template-columns:repeat(7,1fr)}}
 </style>
 </head>
 <body>
@@ -249,8 +268,7 @@ body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{paddin
         <div class="composer">
           <button class="icon-btn" data-action="attach" title="Прикрепить файл" id="attachBtn"></button>
           <textarea id="msgInput" rows="1" placeholder="Сообщение"></textarea>
-          <button class="icon-btn" data-action="composer-emoji" title="Эмодзи" id="emojiBtn"></button>
-          <button class="icon-btn" data-action="sticker" title="Стикеры" id="stickerBtn"></button>
+          <button class="icon-btn" data-action="emoji-panel" title="Эмодзи и стикеры" id="emojiPanelBtn"></button>
           <button class="icon-btn" data-action="voice" title="Голосовое" id="voiceBtn"></button>
           <button class="send-btn" id="sendBtn" data-action="send" disabled title="Отправить"></button>
         </div>
@@ -264,9 +282,8 @@ body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{paddin
 <input type="file" id="avatarGroupInput" accept="image/*" hidden>
 <input type="file" id="voiceFallback" accept="audio/*" capture="user" hidden>
 <input type="file" id="packImageInput" accept="image/*" multiple hidden>
-<div id="stickerPanel" class="hidden"></div>
+<div id="emojiPanel" class="emoji-panel hidden"></div>
 <div id="modalRoot"></div>
-<div id="pickerRoot"></div>
 <div id="lightbox" class="lightbox hidden"></div>
 <div id="plate" class="plate hidden">
   <div class="plate-card">
@@ -309,7 +326,23 @@ const STAR='<svg viewBox="0 0 64 64" fill="none"><path d="M32 4c2.5 15.5 11.5 24
 const ICON_OK='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
 const ICON_ERR='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
-/* ======= Плашка: 'ok' (зелёная, автозакрытие) / 'error' (красная, только по ОК) ======= */
+/* ======= Клавиатура: подъём composer ======= */
+(function initKeyboard(){
+  const root=document.documentElement;
+  function updateKbOffset(){
+    if(!window.visualViewport)return;
+    const vv=window.visualViewport;
+    const kbHeight=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);
+    root.style.setProperty('--kb-offset',kbHeight+'px');
+  }
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',updateKbOffset);
+    window.visualViewport.addEventListener('scroll',updateKbOffset);
+  }
+  window.addEventListener('resize',updateKbOffset);
+  updateKbOffset();
+})();
+
 let plateTimer=null;
 function showPlate(msg,type){
   type=type||'ok';
@@ -331,21 +364,18 @@ function dbLog(op,res){if(res&&res.error)console.error('[Asie_Telegraph] '+op+':
 let db={users:[],chats:[],memberRows:[],messages:[],presence:{},packs:[],stickers:[],userPacks:[]};
 let meId=(function(){const s=sessionStorage.getItem('at_session');if(s)return Number(s);const a=localStorage.getItem('at_active');if(a)return Number(a);return null;})();
 const me=()=>db.users.find(u=>u.id===meId)||null;
-const state={activeChat:null,search:'',replyTo:null,pendingFile:null,lightbox:null,lastCreds:null,notifDismissed:localStorage.getItem('at_notif_dismissed')==='1',groupSel:new Set(),groupName:'',voiceRecording:null,stickerTab:'my',stickerPackId:null,packDraft:null};
+const state={activeChat:null,search:'',replyTo:null,pendingFile:null,lightbox:null,lastCreds:null,notifDismissed:localStorage.getItem('at_notif_dismissed')==='1',groupSel:new Set(),groupName:'',voiceRecording:null,epTab:'emoji',stickerPackId:null,packDraft:null};
 const typingMap={};
 let creatingAccount=false;
 const activeAudios=new Map();
 
-/* ======= Rate limiting (клиентский, запасной) ======= */
 const RL_KEY='at_login_rl';
-function rlGet(){try{return JSON.parse(localStorage.getItem(RL_KEY)||'{"n":0,"until":0}');}catch(e){return{n:0,until:0};}}
-function rlFail(){const r=rlGet();r.n++;if(r.n>=5){r.until=Date.now()+15*60*1000;r.n=0;}localStorage.setItem(RL_KEY,JSON.stringify(r));return r;}
+const RL_MAX=10,RL_WINDOW=60*60*1000;
+function rlGet(){try{return JSON.parse(localStorage.getItem(RL_KEY)||'{"n":0,"until":0,"first":0}');}catch(e){return{n:0,until:0,first:0};}}
+function rlFail(){const r=rlGet();const now=Date.now();if(now-r.first>RL_WINDOW){r.n=0;r.first=now;}r.n++;if(r.n>=RL_MAX){r.until=now+(r.n-RL_MAX+1)*60000;}localStorage.setItem(RL_KEY,JSON.stringify(r));return r;}
 function rlCheck(){const r=rlGet();if(r.until>Date.now())return{allowed:false,retryAfter:Math.ceil((r.until-Date.now())/1000)};return{allowed:true};}
 function rlClear(){localStorage.removeItem(RL_KEY);}
-async function loginGuard(action){
-  try{const {data}=await sb.functions.invoke('login-guard',{body:{action}});return data||{allowed:true};}
-  catch(e){return{allowed:true};}
-}
+async function loginGuard(action){try{const {data}=await sb.functions.invoke('login-guard',{body:{action}});return data||{allowed:true};}catch(e){return{allowed:true};}}
 
 function getAccountIds(){try{return (JSON.parse(localStorage.getItem('at_accounts')||'[]')).map(Number);}catch(e){return[];}}
 function saveAccountIds(ids){localStorage.setItem('at_accounts',JSON.stringify(ids));}
@@ -357,6 +387,20 @@ function addUser(u){if(!db.users.some(x=>x.id===u.id))db.users.push(u);}
 function addChat(c){if(!db.chats.some(x=>x.id===c.id))db.chats.push(c);}
 function addMember(r){if(!db.memberRows.some(x=>x.chat_id===r.chat_id&&x.user_id===r.user_id))db.memberRows.push(r);}
 function addMsg(m){if(!db.messages.some(x=>x.id===m.id))db.messages.push(m);}
+
+function getMember(chatId,userId){return db.memberRows.find(r=>r.chat_id===chatId&&r.user_id===userId);}
+function getRole(chatId,userId){const r=getMember(chatId,userId);return r?(r.role||'member'):'member';}
+function isGroupOwner(chatId,userId){return getRole(chatId,userId)==='owner';}
+function isGroupAdmin(chatId,userId){const r=getRole(chatId,userId);return r==='owner'||r==='admin';}
+function canEditInfo(chat,userId){return isGroupAdmin(chat.id,userId)||chat.perm_edit_info==='all';}
+function canSendMsg(chat,userId){return isGroupAdmin(chat.id,userId)||chat.perm_send_messages==='all';}
+function canAddMembers(chat,userId){return isGroupAdmin(chat.id,userId)||chat.perm_add_members==='all';}
+function canDeleteMsg(chat,msg,userId){
+  if(msg.authorId===userId)return true;
+  if(isGroupAdmin(chat.id,userId))return true;
+  const u=db.users.find(x=>x.id===userId);
+  return !!(u&&u.role==='admin');
+}
 
 function userFromRow(r){return {id:Number(r.id),auth_id:r.auth_id||null,username:r.username,password:r.password,name:r.name,role:r.role,color:r.color,sound:r.sound,bio:r.bio||'',avatar_url:r.avatar_url||null,createdAt:r.created_at};}
 function userToRow(u){return {id:u.id,username:u.username,password:u.password,name:u.name,role:u.role,color:u.color,sound:u.sound!==false,bio:u.bio||'',avatar_url:u.avatar_url||null,created_at:u.createdAt};}
@@ -393,8 +437,8 @@ async function loadAll(){
     sb.from('stickers').select('*'),sb.from('user_packs').select('*')
   ]);
   db.users=(users||[]).map(userFromRow);
-  db.chats=(chatsR.data||[]).map(c=>({id:Number(c.id),type:c.type,name:c.name||null,description:c.description||'',avatar_url:c.avatar_url||null,createdAt:c.created_at}));
-  db.memberRows=(membersR.data||[]).map(m=>({chat_id:Number(m.chat_id),user_id:Number(m.user_id),last_read:m.last_read,muted:!!m.muted}));
+  db.chats=(chatsR.data||[]).map(c=>({id:Number(c.id),type:c.type,name:c.name||null,description:c.description||'',avatar_url:c.avatar_url||null,perm_edit_info:c.perm_edit_info||'all',perm_send_messages:c.perm_send_messages||'all',perm_add_members:c.perm_add_members||'all',createdAt:c.created_at}));
+  db.memberRows=(membersR.data||[]).map(m=>({chat_id:Number(m.chat_id),user_id:Number(m.user_id),last_read:m.last_read,muted:!!m.muted,role:m.role||'member',title:m.title||''}));
   db.messages=(msgsR.data||[]).map(normMsg);
   db.presence={};(presR.data||[]).forEach(p=>db.presence[Number(p.user_id)]=p.last_seen);
   db.packs=(packsR.data||[]).map(x=>({id:Number(x.id),creatorId:Number(x.creator_id),name:x.name,previewUrl:x.preview_url||null,isPublic:x.is_public,createdAt:x.created_at}));
@@ -411,10 +455,10 @@ function setupRealtime(){
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'users'},p=>{addUser(userFromRow(p.new));renderSidebar();})
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'users'},p=>{const u=userFromRow(p.new);const i=db.users.findIndex(x=>x.id===u.id);if(i>=0)db.users[i]=u;renderSidebar();updateHeader();renderChat();})
     .on('postgres_changes',{event:'DELETE',schema:'public',table:'users'},p=>{db.users=db.users.filter(x=>x.id!==Number(p.old.id));renderSidebar();renderChat();})
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'chats'},p=>{addChat({id:Number(p.new.id),type:p.new.type,name:p.new.name||null,description:p.new.description||'',avatar_url:p.new.avatar_url||null,createdAt:p.new.created_at});renderSidebar();})
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'chats'},p=>{const c=db.chats.find(x=>x.id===Number(p.new.id));if(c){c.name=p.new.name;c.description=p.new.description||'';c.avatar_url=p.new.avatar_url||null;}renderSidebar();updateHeader();renderChat();})
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'chats'},p=>{addChat({id:Number(p.new.id),type:p.new.type,name:p.new.name||null,description:p.new.description||'',avatar_url:p.new.avatar_url||null,perm_edit_info:p.new.perm_edit_info||'all',perm_send_messages:p.new.perm_send_messages||'all',perm_add_members:p.new.perm_add_members||'all',createdAt:p.new.created_at});renderSidebar();})
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'chats'},p=>{const c=db.chats.find(x=>x.id===Number(p.new.id));if(c){c.name=p.new.name;c.description=p.new.description||'';c.avatar_url=p.new.avatar_url||null;c.perm_edit_info=p.new.perm_edit_info||'all';c.perm_send_messages=p.new.perm_send_messages||'all';c.perm_add_members=p.new.perm_add_members||'all';}renderSidebar();updateHeader();renderChat();})
     .on('postgres_changes',{event:'DELETE',schema:'public',table:'chats'},p=>{const cid=Number(p.old.id);db.chats=db.chats.filter(x=>x.id!==cid);db.memberRows=db.memberRows.filter(r=>r.chat_id!==cid);if(state.activeChat===cid)state.activeChat=null;renderSidebar();renderChat();})
-    .on('postgres_changes',{event:'*',schema:'public',table:'chat_members'},p=>{if(p.eventType==='INSERT'){addMember({chat_id:Number(p.new.chat_id),user_id:Number(p.new.user_id),last_read:p.new.last_read,muted:!!p.new.muted});}else if(p.eventType==='UPDATE'){const r=db.memberRows.find(r=>r.chat_id===Number(p.new.chat_id)&&r.user_id===Number(p.new.user_id));if(r){r.last_read=p.new.last_read;r.muted=!!p.new.muted;}}else if(p.eventType==='DELETE'){db.memberRows=db.memberRows.filter(r=>!(r.chat_id===Number(p.old.chat_id)&&r.user_id===Number(p.old.user_id)));}renderSidebar();renderChat();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'chat_members'},p=>{if(p.eventType==='INSERT'){addMember({chat_id:Number(p.new.chat_id),user_id:Number(p.new.user_id),last_read:p.new.last_read,muted:!!p.new.muted,role:p.new.role||'member',title:p.new.title||''});}else if(p.eventType==='UPDATE'){const r=db.memberRows.find(r=>r.chat_id===Number(p.new.chat_id)&&r.user_id===Number(p.new.user_id));if(r){r.last_read=p.new.last_read;r.muted=!!p.new.muted;r.role=p.new.role||'member';r.title=p.new.title||'';}}else if(p.eventType==='DELETE'){db.memberRows=db.memberRows.filter(r=>!(r.chat_id===Number(p.old.chat_id)&&r.user_id===Number(p.old.user_id)));}renderSidebar();renderChat();})
     .on('postgres_changes',{event:'*',schema:'public',table:'presence'},p=>{if(p.eventType==='DELETE')delete db.presence[Number(p.old.user_id)];else db.presence[Number(p.new.user_id)]=p.new.last_seen;renderSidebar();updateHeader();})
     .on('postgres_changes',{event:'*',schema:'public',table:'sticker_packs'},p=>{syncStickers();})
     .on('postgres_changes',{event:'*',schema:'public',table:'stickers'},p=>{syncStickers();})
@@ -429,7 +473,7 @@ async function syncStickers(){
   db.packs=(p.data||[]).map(x=>({id:Number(x.id),creatorId:Number(x.creator_id),name:x.name,previewUrl:x.preview_url||null,isPublic:x.is_public,createdAt:x.created_at}));
   db.stickers=(s.data||[]).map(x=>({id:Number(x.id),packId:Number(x.pack_id),imageUrl:x.image_url,emoji:x.emoji||'',createdAt:x.created_at}));
   db.userPacks=(u.data||[]).map(x=>({userId:Number(x.user_id),packId:Number(x.pack_id),addedAt:x.added_at}));
-  if(!$('#stickerPanel').classList.contains('hidden'))renderStickerPanel();
+  if(!$('#emojiPanel').classList.contains('hidden'))renderEmojiPanel();
 }
 function onIncoming(m){
   if(m.authorId===meId)return;
@@ -484,7 +528,7 @@ let actx=null;
 function ding(){const u=me();if(u&&u.sound===false)return;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.setValueAtTime(880,t);o.frequency.exponentialRampToValueAtTime(587,t+.13);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.11,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.32);o.connect(g).connect(actx.destination);o.start(t);o.stop(t+.34);}catch(e){}}
 document.addEventListener('click',()=>{try{actx&&actx.state==='suspended'&&actx.resume();}catch(e){}},{once:true});
 
-function markRead(chatId){if(!meId)return;const arr=db.messages.filter(m=>m.chatId===chatId);if(!arr.length)return;const last=arr[arr.length-1].createdAt;let row=db.memberRows.find(r=>r.chat_id===chatId&&r.user_id===meId);if(row&&row.last_read>=last)return;const ts=Math.max(Date.now(),last);if(row)row.last_read=ts;else{row={chat_id:chatId,user_id:meId,last_read:ts,muted:false};addMember(row);}sb.from('chat_members').upsert({chat_id:chatId,user_id:meId,last_read:ts},{onConflict:'chat_id,user_id'}).then(r=>dbLog('прочтение',r));}
+function markRead(chatId){if(!meId)return;const arr=db.messages.filter(m=>m.chatId===chatId);if(!arr.length)return;const last=arr[arr.length-1].createdAt;let row=db.memberRows.find(r=>r.chat_id===chatId&&r.user_id===meId);if(row&&row.last_read>=last)return;const ts=Math.max(Date.now(),last);if(row)row.last_read=ts;else{row={chat_id:chatId,user_id:meId,last_read:ts,muted:row?row.muted:false,role:row?row.role:'member',title:row?row.title:''};addMember(row);}sb.from('chat_members').upsert({chat_id:chatId,user_id:meId,last_read:ts},{onConflict:'chat_id,user_id'}).then(r=>dbLog('прочтение',r));}
 function unreadCount(chatId){const lr=lastReadOf(meId,chatId);return db.messages.filter(m=>m.chatId===chatId&&m.authorId!==meId&&m.createdAt>lr).length;}
 
 async function toggleMute(chatId){
@@ -516,7 +560,7 @@ function renderSidebar(){
   const total=db.chats.filter(c=>membersOf(c.id).includes(meId)).reduce((s,c)=>s+unreadCount(c.id),0);
   document.title=total?`(${total}) Asie_Telegraph`:'Asie_Telegraph';
 }
-function renderChat(){const cv=$('#chatView'),es=$('#emptyState');if(!state.activeChat){cv.classList.add('hidden');es.classList.remove('hidden');return;}const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat){state.activeChat=null;return renderChat();}es.classList.add('hidden');cv.classList.remove('hidden');const gone=activeOtherGone();const ta=$('#msgInput');ta.disabled=gone;ta.placeholder=gone?'Пользователь удалён — отправка недоступна':'Сообщение';updateHeader();renderMessages();renderComposerExtras();}
+function renderChat(){const cv=$('#chatView'),es=$('#emptyState');if(!state.activeChat){cv.classList.add('hidden');es.classList.remove('hidden');return;}const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat){state.activeChat=null;return renderChat();}es.classList.add('hidden');cv.classList.remove('hidden');const gone=activeOtherGone();const canSend=chat.type!=='group'||canSendMsg(chat,meId);const ta=$('#msgInput');ta.disabled=gone||!canSend;ta.placeholder=gone?'Пользователь удалён — отправка недоступна':(!canSend?'Только администраторы могут писать':'Сообщение');updateHeader();renderMessages();renderComposerExtras();}
 function updateHeader(){
   const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat)return;
   const muted=isChatMuted(chat.id);
@@ -543,12 +587,24 @@ function buildVoice(m){return `<div class="m-voice" data-vid="${m.id}"><button c
 function buildSticker(m){return `<div class="m-sticker"><img src="${esc(m.stickerUrl)}" alt="стикер" data-action="open-sticker" data-id="${m.id}"></div>`;}
 function buildReacts(m){const entries=Object.entries(m.reactions||{});if(!entries.length)return '';return '<div class="reacts">'+entries.map(([e,ids])=>`<button class="rchip ${ids.includes(meId)?'mine':''}" data-action="react" data-id="${m.id}" data-emoji="${e}">${e}<span>${ids.length}</span></button>`).join('')+'</div>';}
 function renderMessages(){
-  const box=$('#messages');const msgs=db.messages.filter(m=>m.chatId===state.activeChat).sort((a,b)=>a.createdAt-b.createdAt);const nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<150;const u0=me();let html='',prev=null,prevDay='';
-  msgs.forEach((m,i)=>{const dk=dayKey(m.createdAt);if(dk!==prevDay){html+=`<div class="day">${fmtDay(m.createdAt)}</div>`;prevDay=dk;prev=null;}const next=msgs[i+1];const own=m.authorId===meId;const author=db.users.find(x=>x.id===m.authorId);const first=!prev||prev.authorId!==m.authorId||(m.createdAt-prev.createdAt>5*60000);const lastG=!next||next.authorId!==m.authorId||(next.createdAt-m.createdAt>5*60000);const avCol=own?'':`<div class="msg-av">${lastG?avatarHtml(author,'avatar--xs'):''}</div>`;const name=(!own&&first&&author)?`<div class="m-name" style="color:${author.color}">${esc(author.name)}</div>`:'';let reply='';if(m.replyTo){const o=db.messages.find(x=>x.id===m.replyTo);const oa=o&&db.users.find(x=>x.id===o.authorId);const rt=o?(o.stickerUrl?'🖼 Стикер':(o.voice?'🎤 Голосовое':(o.file?('📎 '+esc(o.file.name)):esc(o.text||'')))):'Сообщение удалено';reply=`<div class="reply-block" data-action="goto-msg" data-id="${m.replyTo}"><div class="rb-name">${oa?esc(oa.name):'—'}</div><div class="rb-text">${rt}</div></div>`;}
-    const isStickerOnly=!!m.stickerUrl&&!m.text&&!m.file&&!m.voice;
-    const file=m.file?buildFile(m):'';const voice=m.voice?buildVoice(m):'';const sticker=m.stickerUrl?buildSticker(m):'';const text=m.text?`<div class="m-text">${linkify(esc(m.text))}</div>`:'';const reacts=buildReacts(m);const read=isReadByOther(m);const checks=own?`<span class="checks ${read?'read':''}">${read?I.checks:I.check}</span>`:'';const canDel=own||u0.role==='admin';
+  const box=$('#messages');const chat=db.chats.find(c=>c.id===state.activeChat);const msgs=db.messages.filter(m=>m.chatId===state.activeChat).sort((a,b)=>a.createdAt-b.createdAt);const nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<150;let html='',prev=null,prevDay='';
+  msgs.forEach((m,i)=>{const dk=dayKey(m.createdAt);if(dk!==prevDay){html+=`<div class="day">${fmtDay(m.createdAt)}</div>`;prevDay=dk;prev=null;}const next=msgs[i+1];const own=m.authorId===meId;const author=db.users.find(x=>x.id===m.authorId);const first=!prev||prev.authorId!==m.authorId||(m.createdAt-prev.createdAt>5*60000);const lastG=!next||next.authorId!==m.authorId||(next.createdAt-m.createdAt>5*60000);const avCol=own?'':`<div class="msg-av">${lastG?avatarHtml(author,'avatar--xs'):''}</div>`;
+    let name='';
+    if(!own&&first&&author){
+      let roleBadge='',titleBadge='';
+      if(chat&&chat.type==='group'){
+        const role=getRole(chat.id,m.authorId);
+        const mem=getMember(chat.id,m.authorId);
+        if(mem&&mem.title)titleBadge=`<span class="admin-title">${esc(mem.title)}</span>`;
+        if(role==='owner')roleBadge='<span class="role-badge role-badge--owner">владелец</span>';
+        else if(role==='admin')roleBadge='<span class="role-badge">админ</span>';
+      }
+      name=`<div class="m-name" style="color:${author.color}">${esc(author.name)} ${titleBadge}${roleBadge}</div>`;
+    }
+    let reply='';if(m.replyTo){const o=db.messages.find(x=>x.id===m.replyTo);const oa=o&&db.users.find(x=>x.id===o.authorId);const rt=o?(o.stickerUrl?'🖼 Стикер':(o.voice?'🎤 Голосовое':(o.file?('📎 '+esc(o.file.name)):esc(o.text||'')))):'Сообщение удалено';reply=`<div class="reply-block" data-action="goto-msg" data-id="${m.replyTo}"><div class="rb-name">${oa?esc(oa.name):'—'}</div><div class="rb-text">${rt}</div></div>`;}
+    const file=m.file?buildFile(m):'';const voice=m.voice?buildVoice(m):'';const sticker=m.stickerUrl?buildSticker(m):'';const text=m.text?`<div class="m-text">${linkify(esc(m.text))}</div>`:'';const reacts=buildReacts(m);const read=isReadByOther(m);const checks=own?`<span class="checks ${read?'read':''}">${read?I.checks:I.check}</span>`:'';const canDel=canDeleteMsg(chat,m,meId);
     const actions=`<div class="msg-actions"><button class="ma-btn" data-action="open-react" data-id="${m.id}" title="Реакция">${I.smile}</button><button class="ma-btn" data-action="reply" data-id="${m.id}" title="Ответить">${I.reply}</button>${m.text?`<button class="ma-btn" data-action="copy-msg" data-id="${m.id}" title="Копировать">${I.copy}</button>`:''}${m.file?`<button class="ma-btn" data-action="download" data-id="${m.id}" title="Скачать">${I.download}</button>`:''}${m.voice?`<button class="ma-btn" data-action="download-voice" data-id="${m.id}" title="Скачать">${I.download}</button>`:''}${canDel?`<button class="ma-btn ma-btn--danger" data-action="del-msg" data-id="${m.id}" title="Удалить">${I.trash}</button>`:''}</div>`;
-    html+=`<div class="msg ${own?'own':'in'} ${lastG?'last':''} ${first?'first':''}" data-mid="${m.id}">${avCol}<div class="bubble-col">${actions}<div class="bubble ${isStickerOnly?'bubble--sticker':''}">${name}${reply}${file}${voice}${sticker}${text}${reacts}<div class="m-meta">${fmtTime(m.createdAt)}${checks}</div></div></div></div>`;prev=m;});
+    html+=`<div class="msg ${own?'own':'in'} ${lastG?'last':''} ${first?'first':''}" data-mid="${m.id}">${avCol}<div class="bubble-col">${actions}<div class="bubble ${m.stickerUrl&&!m.text&&!m.file&&!m.voice?'bubble--sticker':''}">${name}${reply}${file}${voice}${sticker}${text}${reacts}<div class="m-meta">${fmtTime(m.createdAt)}${checks}</div></div></div></div>`;prev=m;});
   box.innerHTML=html||`<div class="list-empty msgs-empty">Сообщений пока нет<br><span>Напишите первым 👋</span></div>`;
   if(state.forceBottom||nearBottom){box.scrollTop=box.scrollHeight;state.forceBottom=false;}
 }
@@ -560,12 +616,62 @@ function renderComposerExtras(){
   updateSendBtn();updateVoiceBtn();
 }
 function updateVoiceBtn(){const btn=$('#voiceBtn');const sendBtn=$('#sendBtn');if(state.voiceRecording){btn.innerHTML=I.stop;btn.style.color='#ef4444';sendBtn.classList.add('send-btn--rec');sendBtn.innerHTML=I.send;sendBtn.disabled=false;return;}btn.innerHTML=I.mic;btn.style.color='';sendBtn.classList.remove('send-btn--rec');updateSendBtn();}
-function updateSendBtn(){const gone=activeOtherGone();$('#sendBtn').disabled=gone||!($('#msgInput').value.trim()||state.pendingFile);}
+function updateSendBtn(){const gone=activeOtherGone();const chat=db.chats.find(c=>c.id===state.activeChat);const canSend=!chat||chat.type!=='group'||canSendMsg(chat,meId);$('#sendBtn').disabled=gone||!canSend||!($('#msgInput').value.trim()||state.pendingFile);}
 
-function openChat(chatId){state.activeChat=chatId;state.replyTo=null;markRead(chatId);state.forceBottom=true;closeStickerPanel();render();document.body.classList.add('chat-open');if(window.innerWidth>760)$('#msgInput').focus();}
-function startDM(userId){let chat=db.chats.find(c=>{const ms=membersOf(c.id);return c.type==='dm'&&ms.includes(meId)&&ms.includes(userId);});if(!chat){(async()=>{const cid=await uniqueId('chats');const nc={id:cid,type:'dm',name:null,description:'',avatar_url:null,createdAt:Date.now()};const now=Date.now();const r1=await sb.from('chats').insert({id:cid,type:'dm',created_at:now});if(dbErr('создание чата',r1))return;const r2a=await sb.from('chat_members').insert({chat_id:cid,user_id:meId,last_read:now,muted:false});if(dbErr('создание участников',r2a))return;const r2b=await sb.from('chat_members').insert({chat_id:cid,user_id:userId,last_read:0,muted:false});if(dbErr('создание участников',r2b))return;addChat(nc);addMember({chat_id:cid,user_id:meId,last_read:now,muted:false});addMember({chat_id:cid,user_id:userId,last_read:0,muted:false});closeModal();openChat(cid);})();return;}closeModal();openChat(chat.id);}async function sendMessage(){
+/* ======= Единая панель эмодзи/стикеров ======= */
+const TEXT_EMOJI=['😀','😁','😂','🤣','😊','😍','😘','😎','🤔','🙃','😅','😭','😡','🥳','🤯','😴','😈','👻','💀','🤡','👽','🤖','💩','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🙈','🙉','🙊','🐵','🐶','🐺','🐱','🦁','🐯','🦒','🦊','🦝','🐮','🐷','🐗','🐭','🐹','🐰','🐻','🐨','🐼','🐸','🦓','🦄','🐔','🐲','🐽','🐾','🐒','🦍','🦧','🦮','🐕','🐩','🐈','🐅','🐆','🐎','🦌','🦬','🐂','🐃','🐄','🐖','🐏','🐑','🐐','🫎','🫏','🐪','🐫','🦙','🦘','🦥','🦨','🦡','🐘','🦏','🦛','🐁','🐀','🦔','🐇','🐿️','🦫','🦦','🦇','🐓','🦃','🦅','🕊️','🦆','🦢','🦉','🦤','🪶','🦩','🦚','🦜','🪽','🪿','🐦‍⬛','🐧','🐦','🐤','🐣','🐥','🦕','🦖','🐊','🐢','🐍','🐉','🐲','🦎','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐅','🐆','🦓','🦍','🦧','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🦬','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🐐','🦌','🐕','🐩','🦮','🐕‍🦺','🐈','🐈‍⬛','🪮','🐓','🦃','🦤','🦚','🦜','🦢','🦩','🕊️','🐇','🦝','🦨','🦡','🦫','🦦','🦥','🐁','🐀','🐿️','🦔','🐉','🐲','🦕','🦖','🐊','🐢','🐍','🦎','🦂','🕷️','🕸️','🦟','🪰','🪱','🦠','💐','🌸','💮','🪷','🏵️','🌹','🥀','🌺','🌻','🌼','🌷','🪻','🌱','🪴','🌲','🌳','🌴','🌵','🌾','🌿','☘️','🍀','🍁','🍂','🍃','🪹','🪺','🍇','🍈','🍉','🍊','🍋','🍌','🍍','🥭','🍎','🍏','🍐','🍑','🍒','🍓','🫐','🥝','🍅','🫒','🥥','🥑','🍆','🥔','🥕','🌽','🌶️','🫑','🥒','🥬','🥦','🧄','🧅','🥜','🫘','🌰','🫚','🫛','🍞','🥐','🥖','🫓','🥨','🥯','🥞','🧇','🧀','🍖','🍗','🥩','🥓','🍔','🍟','🍕','🌭','🥪','🌮','🌯','🫔','🥙','🧆','🥚','🍳','🥘','🍲','🫕','🥣','🥗','🍿','🧈','🧂','🥫','🍱','🍘','🍙','🍚','🍛','🍜','🍝','🍠','🍢','🍣','🍤','🍥','🥮','🍡','🥟','🥠','🥡','🦀','🦞','🦐','🦑','🦪','🍦','🍧','🍨','🍩','🍪','🎂','🍰','🧁','🥧','🍫','🍬','🍭','🍮','🍯','🍼','🥛','☕','🫖','🍵','🍶','🍾','🍷','🍸','🍹','🍺','🍻','🥂','🥃','🫗','🥤','🧋','🧃','🧉','🧊','🥢','🍽️','🍴','🥄','🔪','🫙','🏺','🌍','🌎','🌏','🌐','🗺️','🗾','🧭','🏔️','⛰️','🌋','🗻','🏕️','🏖️','🏜️','🏝️','🏞️','🏟️','🏛️','🏗️','🧱','🪨','🪵','🛖','🏘️','🏚️','🏠','🏡','🏢','🏣','🏤','🏥','🏦','🏨','🏩','🏪','🏫','🏬','🏭','🏯','🏰','💒','🗼','🗽','⛪','🕌','🛕','🕍','⛩️','🕋','⛲','⛺','🌁','🌃','🏙️','🌄','🌅','🌆','🌇','🌉','♨️','🎠','🛝','🎡','🎢','💈','🎪','🚂','🚃','🚄','🚅','🚆','🚇','🚈','🚉','🚊','🚝','🚞','🚋','🚌','🚍','🚎','🚐','🚑','🚒','🚓','🚔','🚕','🚖','🚗','🚘','🚙','🛻','🚚','🚛','🚜','🏎️','🏍️','🛵','🦽','🦼','🛺','🚲','🛴','🛹','🛼','🚏','🛣️','🛤️','🛢️','⛽','🛞','🚨','🚥','🚦','🛑','🚧','⚓','🛟','⛵','🛶','🚤','🛳️','⛴️','🛥️','🚢','✈️','🛩️','🛫','🛬','🪂','💺','🚁','🚟','🚠','🚡','🛰️','🚀','🛸','🛎️','🧳','⌛','⏳','⌚','⏰','⏱️','⏲️','🕰️','🕛','🕧','🕐','🕜','🕑','🕝','🕒','🕞','🕓','🕟','🕔','🕠','🕕','🕡','🕖','🕢','🕗','🕣','🕘','🕤','🕙','🕥','🕚','🕦','🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘','🌙','🌚','🌛','🌜','🌡️','☀️','🌝','🌞','⭐','🌟','🌠','🌌','☁️','⛅','⛈️','🌤️','🌥️','🌦️','🌧️','🌨️','🌩️','🌪️','🌫️','🌬️','🌀','🌈','🌂','☂️','☔','⛱️','⚡','❄️','☃️','⛄','☄️','🔥','💧','🌊','🎃','🎄','🎆','🎇','🧨','✨','🎈','🎉','🎊','🎋','🎍','🎎','🎏','🎐','🎑','🧧','🎀','🎁','🎗️','🎟️','🎫','🎖️','🏆','🏅','🥇','🥈','🥉','⚽','⚾','🥎','🏀','🏐','🏈','🏉','🎾','🥏','🎳','🏏','🏑','🏒','🥍','🏓','🏸','🥊','🥋','🥅','⛳','⛸️','🎣','🤿','🎽','🎿','🛷','🥌','🎯','🪀','🪁','🔫','🎱','🔮','🪄','🎮','🕹️','🎰','🎲','🧩','🧸','🪅','🪩','🪆','♠️','♥️','♦️','♣️','♟️','🃏','🀄','🎴','🎭','🖼️','🎨','🧵','🪡','🧶','🪢','👓','🕶️','🥽','🥼','🦺','👔','👕','👖','🧣','🧤','🧥','🧦','👗','👘','🥻','🩱','🩲','🩳','👙','👚','🪭','👛','👜','👝','🛍️','🎒','🩴','👞','👟','🥾','🥿','👠','👡','🩰','👢','🪮','👑','👒','🎩','🎓','🧢','🪖','⛑️','📿','💄','💍','💎','🔇','🔈','🔉','🔊','📢','📣','📯','🔔','🔕','🎼','🎵','🎶','🎙️','🎚️','🎛️','🎤','🎧','📻','🎷','🪗','🎸','🎹','🎺','🎻','🪕','🥁','🪘','🪇','🪈','📱','📲','☎️','📞','📟','📠','🔋','🪫','🔌','💻','🖥️','🖨️','⌨️','🖱️','🖲️','💽','💾','💿','📀','🧮','🎥','🎞️','📽️','🎬','📺','📷','📸','📹','📼','🔍','🔎','🕯️','💡','🔦','🏮','🪔','📔','📕','📖','📗','📘','📙','📚','📓','📒','📃','📜','📄','📰','🗞️','📑','🔖','🏷️','💰','🪙','💴','💵','💶','💷','💸','💳','🧾','💹','✉️','📧','📨','📩','📤','📥','📦','📫','📪','📬','📭','📮','🗳️','✏️','✒️','🖋️','🖊️','🖌️','🖍️','📝','💼','📁','📂','🗂️','📅','📆','🗒️','🗓️','📇','📈','📉','📊','📋','📌','📍','📎','🖇️','📏','📐','✂️','🗃️','🗄️','🗑️','🔒','🔓','🔏','🔐','🔑','🗝️','🔨','🪓','⛏️','⚒️','🛠️','🗡️','⚔️','💣','🪃','🏹','🛡️','🪚','🔧','🪛','🔩','⚙️','🗜️','⚖️','🦯','🔗','⛓️','🪝','🧰','🧲','🪜','⚗️','🧪','🧫','🧬','🔬','🔭','📡','💉','🩸','💊','🩹','🩼','🩺','🩻','🚪','🛗','🪞','🪟','🛏️','🛋️','🪑','🚽','🪠','🚿','🛁','🪤','🪒','🧴','🧷','🧹','🧺','🧻','🪣','🧼','🫧','🪥','🧽','🧯','🛒','🚬','⚰️','🪦','⚱️','🗿','🪧','🪪','🏧','🚮','🚰','♿','🚹','🚺','🚻','🚼','🚾','🛂','🛃','🛄','🛅','⚠️','🚸','⛔','🚫','🚳','🚭','🚯','🚱','🚷','📵','🔞','☢️','☣️','⬆️','↗️','➡️','↘️','⬇️','↙️','⬅️','↖️','↕️','↔️','↩️','↪️','⤴️','⤵️','🔃','🔄','🔙','🔚','🔛','🔜','🔝','🛐','⚛️','🕉️','✡️','☸️','☯️','✝️','☦️','☪️','☮️','🕎','🔯','🪯','♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓','⛎','🔀','🔁','🔂','▶️','⏩','⏭️','⏯️','◀️','⏪','⏮️','🔼','⏫','🔽','⏬','⏸️','⏹️','⏺️','⏏️','🎦','🔅','🔆','📶','🛜','📳','📴','♀️','♂️','⚧️','✖️','➕','➖','➗','🟰','♾️','‼️','⁉️','❓','❔','❕','❗','〰️','💱','💲','⚕️','♻️','⚜️','🔱','📛','🔰','⭕','✅','☑️','✔️','❌','❎','➰','➿','〽️','✳️','✴️','❇️','©️','®️','™️','#️⃣','*️⃣','0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟','🔠','🔡','🔢','🔣','🔤','🅰️','🆎','🅱️','🆑','🆒','🆓','ℹ️','🆔','Ⓜ️','🆕','🆖','🅾️','🆗','🅿️','🆘','🆙','🆚','🈁','🈂️','🈷️','🈶','🈯','🉐','🈹','🈚','🈲','🉑','🈸','🈴','🈳','㊗️','㊙️','🈺','🈵','🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫','⚪','🟥','🟧','🟨','🟩','🟦','🟪','🟫','⬛','⬜','◼️','◻️','◾','◽','▪️','▫️','🔶','🔷','🔸','🔹','🔺','🔻','💠','🔘','🔳','🔲','🏁','🚩','🎌','🏴','🏳️','🏳️‍🌈','🏳️‍⚧️','🏴‍☠️'];
+
+function myPackList(){const added=db.userPacks.filter(r=>r.userId===meId).map(r=>r.packId);return db.packs.filter(p=>p.creatorId===meId||added.includes(p.id));}
+function storePackList(){const mine=new Set(myPackList().map(p=>p.id));return db.packs.filter(p=>p.isPublic&&!mine.has(p.id));}
+
+function openEmojiPanel(){state.epTab=state.epTab||'emoji';renderEmojiPanel();$('#emojiPanel').classList.remove('hidden');}
+function closeEmojiPanel(){$('#emojiPanel').classList.add('hidden');}
+function toggleEmojiPanel(){$('#emojiPanel').classList.contains('hidden')?openEmojiPanel():closeEmojiPanel();}
+function renderEmojiPanel(){
+  const panel=$('#emojiPanel');
+  const isEmoji=state.epTab==='emoji';
+  if(isEmoji){
+    panel.innerHTML=`
+     <div class="ep-head">
+       <div class="ep-tabs">
+         <button class="ep-tab on" data-action="ep-tab" data-tab="emoji">Эмодзи</button>
+         <button class="ep-tab" data-action="ep-tab" data-tab="stickers">Стикеры</button>
+       </div>
+       <button class="icon-btn icon-btn--sm" data-action="ep-close">${I.x}</button>
+     </div>
+     <div class="ep-body">
+       <div class="ep-grid">${TEXT_EMOJI.map(e=>`<button class="ep-item" data-action="ep-emoji" data-emoji="${e}">${e}</button>`).join('')}</div>
+     </div>`;
+  }else{
+    const packs=myPackList();
+    if(!state.stickerPackId||!packs.some(p=>p.id===state.stickerPackId)){state.stickerPackId=packs.length?packs[0].id:null;}
+    const sel=packs.find(p=>p.id===state.stickerPackId);
+    const stickers=sel?db.stickers.filter(s=>s.packId===sel.id):[];
+    const prev=p=>p.previewUrl?`<img src="${esc(p.previewUrl)}" alt="">`:`<div class="sp-pack-ph">${I.sticker}</div>`;
+    panel.innerHTML=`
+     <div class="ep-head">
+       <div class="ep-tabs">
+         <button class="ep-tab" data-action="ep-tab" data-tab="emoji">Эмодзи</button>
+         <button class="ep-tab on" data-action="ep-tab" data-tab="stickers">Стикеры</button>
+       </div>
+       <button class="icon-btn icon-btn--sm" data-action="ep-close">${I.x}</button>
+     </div>
+     <div class="ep-body">
+       ${packs.length?`<div class="sp-packrow">${packs.map(p=>`<button class="sp-pack ${p.id===state.stickerPackId?'on':''}" data-action="ep-sp-pick" data-id="${p.id}">${prev(p)}<span>${esc(p.name)}</span></button>`).join('')}</div>`:''}
+       ${sel?`<div class="sp-grid">${stickers.map(s=>`<button class="sp-item" data-action="ep-sp-send" data-id="${s.id}"><img src="${esc(s.imageUrl)}" alt=""></button>`).join('')||'<p class="m-empty">В наборе пока нет стикеров</p>'}</div>`
+       :'<p class="m-empty">У вас пока нет наборов.<br>Создайте в профиле → Админ-панель или попросите админа.</p>'}
+     </div>`;
+  }
+}
+function insertEmoji(e){const ta=$('#msgInput');const s=ta.selectionStart??ta.value.length;ta.value=ta.value.slice(0,s)+e+ta.value.slice(ta.selectionEnd??s);ta.focus();ta.selectionStart=ta.selectionEnd=s+e.length;updateSendBtn();}
+
+function openChat(chatId){state.activeChat=chatId;state.replyTo=null;markRead(chatId);state.forceBottom=true;closeEmojiPanel();render();document.body.classList.add('chat-open');if(window.innerWidth>760)$('#msgInput').focus();}
+function startDM(userId){(async()=>{try{const {data:cid,error}=await sb.rpc('find_or_create_dm',{other_user_id:userId});if(error||!cid){dbErr('создание чата',{error:error||{message:'Не удалось создать чат'}});return;}await loadAll();closeModal();openChat(Number(cid));}catch(e){showPlate('Ошибка: '+(e.message||'Не удалось открыть чат'),'error');}})();}
+async function sendMessage(){
   const ta=$('#msgInput');const text=ta.value.trim();const f=state.pendingFile;
   if(!text&&!f)return;if(!state.activeChat||activeOtherGone())return;
+  const chat=db.chats.find(c=>c.id===state.activeChat);
+  if(chat&&chat.type==='group'&&!canSendMsg(chat,meId)){showPlate('Только администраторы могут писать в этой группе','error');return;}
   if(text.length>4000){showPlate('Сообщение слишком длинное (максимум 4000 символов)','error');return;}
   const mid=await uniqueId('messages');
   const m={id:mid,chatId:state.activeChat,authorId:meId,text,createdAt:Date.now(),reactions:{}};
@@ -573,9 +679,9 @@ function startDM(userId){let chat=db.chats.find(c=>{const ms=membersOf(c.id);ret
   if(state.replyTo)m.replyTo=state.replyTo.id;
   addMsg(m);markRead(m.chatId);
   state.replyTo=null;state.pendingFile=null;ta.value='';ta.style.height='auto';
-  state.forceBottom=true;closeStickerPanel();render();
+  state.forceBottom=true;closeEmojiPanel();render();
   const res=await sb.from('messages').insert(msgToRow(m));
-  if(!dbErr('отправка сообщения',res)){const chat=db.chats.find(c=>c.id===m.chatId);const pushTitle=chat&&chat.type==='group'?`${chat.name||'Группа'} · ${me().name}`:me().name;const pushBody=m.file?('📎 '+m.file.name):(m.text||'');sendPush(m.chatId,pushTitle,pushBody,'at_'+m.chatId);}
+  if(!dbErr('отправка сообщения',res)){const pushTitle=chat&&chat.type==='group'?`${chat.name||'Группа'} · ${me().name}`:me().name;const pushBody=m.file?('📎 '+m.file.name):(m.text||'');sendPush(m.chatId,pushTitle,pushBody,'at_'+m.chatId);}
 }
 async function toggleReact(msgId,emoji){const m=db.messages.find(x=>x.id===msgId);if(!m)return;m.reactions=m.reactions||{};const arr=m.reactions[emoji]||[];const i=arr.indexOf(meId);if(i>=0)arr.splice(i,1);else arr.push(meId);if(arr.length)m.reactions[emoji]=arr;else delete m.reactions[emoji];renderChat();dbErr('реакция',await sb.from('messages').update({reactions:m.reactions}).eq('id',msgId));}
 function downloadFile(f){const a=document.createElement('a');a.href=f.data;a.download=f.name;document.body.appendChild(a);a.click();a.remove();}
@@ -584,46 +690,18 @@ function gotoMsg(id){const el=document.querySelector(`[data-mid="${id}"]`);if(!e
 function openLightboxUrl(url){state.lightbox={data:url,name:'image'};$('#lightbox').innerHTML=`<button class="icon-btn lb-x" data-action="lb-close">${I.x}</button><img src="${esc(url)}" alt="">`;$('#lightbox').classList.remove('hidden');}
 function openLightbox(f){state.lightbox=f;$('#lightbox').innerHTML=`<button class="icon-btn lb-x" data-action="lb-close">${I.x}</button><button class="btn lb-dl" data-action="lb-download">${I.download}<span>Скачать</span></button><img src="${f.data}" alt="${esc(f.name)}">`;$('#lightbox').classList.remove('hidden');}
 
-function myPackList(){const added=db.userPacks.filter(r=>r.userId===meId).map(r=>r.packId);return db.packs.filter(p=>p.creatorId===meId||added.includes(p.id));}
-function storePackList(){const mine=new Set(myPackList().map(p=>p.id));return db.packs.filter(p=>p.isPublic&&!mine.has(p.id));}
-function openStickerPanel(){state.stickerTab=state.stickerTab||'my';closePicker();renderStickerPanel();$('#stickerPanel').classList.remove('hidden');}
-function closeStickerPanel(){$('#stickerPanel').classList.add('hidden');}
-function toggleStickerPanel(){$('#stickerPanel').classList.contains('hidden')?openStickerPanel():closeStickerPanel();}
-function renderStickerPanel(){
-  const panel=$('#stickerPanel');const isMy=state.stickerTab==='my';
-  const packs=isMy?myPackList():storePackList();
-  if(!state.stickerPackId||!packs.some(p=>p.id===state.stickerPackId)){state.stickerPackId=packs.length?packs[0].id:null;}
-  const sel=packs.find(p=>p.id===state.stickerPackId);
-  const stickers=sel?db.stickers.filter(s=>s.packId===sel.id):[];
-  const prev=p=>p.previewUrl?`<img src="${esc(p.previewUrl)}" alt="">`:`<div class="sp-pack-ph">${I.sticker}</div>`;
-  panel.innerHTML=`
-   <div class="sp-head">
-     <div class="sp-tabs">
-       <button class="sp-tab ${isMy?'on':''}" data-action="sp-tab" data-tab="my">Мои</button>
-       <button class="sp-tab ${!isMy?'on':''}" data-action="sp-tab" data-tab="store">Магазин</button>
-     </div>
-     <button class="icon-btn icon-btn--sm" data-action="sp-create" title="Создать набор">${I.plus}</button>
-     <button class="icon-btn icon-btn--sm" data-action="sp-close" title="Закрыть">${I.x}</button>
-   </div>
-   <div class="sp-body">
-     ${packs.length?`<div class="sp-packrow">${packs.map(p=>`<button class="sp-pack ${p.id===state.stickerPackId?'on':''}" data-action="sp-pick" data-id="${p.id}">${prev(p)}<span>${esc(p.name)}</span></button>`).join('')}</div>`:''}
-     ${sel?`
-       ${!isMy?`<button class="btn btn-sm" data-action="sp-add-pack" data-id="${sel.id}" style="margin-bottom:12px">${I.plus}<span>Добавить набор</span></button>`:''}
-       ${isMy&&sel.creatorId===meId?`<button class="btn btn-sm btn--danger" data-action="sp-del-pack" data-id="${sel.id}" style="margin-bottom:12px">${I.trash}<span>Удалить набор</span></button>`:''}
-       <div class="sp-grid">${stickers.map(s=>`<button class="sp-item" data-action="sp-send" data-id="${s.id}"><img src="${esc(s.imageUrl)}" alt=""></button>`).join('')||'<p class="m-empty">В наборе пока нет стикеров</p>'}</div>
-     `:(isMy?`<p class="m-empty">У вас пока нет наборов.<br>Нажмите ＋, чтобы создать первый!</p>`:`<p class="m-empty">Публичных наборов пока нет.<br>Создайте свой — он появится здесь!</p>`)}
-   </div>`;
-}
 async function sendSticker(stickerId){
   const s=db.stickers.find(x=>x.id===stickerId);if(!s)return;
   if(!state.activeChat||activeOtherGone())return;
+  const chat=db.chats.find(c=>c.id===state.activeChat);
+  if(chat&&chat.type==='group'&&!canSendMsg(chat,meId)){showPlate('Только администраторы могут писать в этой группе','error');return;}
   const mid=await uniqueId('messages');
   const m={id:mid,chatId:state.activeChat,authorId:meId,text:'',stickerUrl:s.imageUrl,createdAt:Date.now(),reactions:{}};
   if(state.replyTo)m.replyTo=state.replyTo.id;
   addMsg(m);markRead(m.chatId);
-  state.replyTo=null;state.forceBottom=true;closeStickerPanel();render();
+  state.replyTo=null;state.forceBottom=true;closeEmojiPanel();render();
   const res=await sb.from('messages').insert(msgToRow(m));
-  if(!dbErr('стикер',res)){const chat=db.chats.find(c=>c.id===m.chatId);const pushTitle=chat&&chat.type==='group'?`${chat.name||'Группа'} · ${me().name}`:me().name;sendPush(m.chatId,pushTitle,'🖼 Стикер','at_'+m.chatId);}
+  if(!dbErr('стикер',res)){const pushTitle=chat&&chat.type==='group'?`${chat.name||'Группа'} · ${me().name}`:me().name;sendPush(m.chatId,pushTitle,'🖼 Стикер','at_'+m.chatId);}
 }
 function processStickerFile(file){
   return new Promise((resolve,reject)=>{
@@ -677,8 +755,8 @@ async function savePack(){
     db.packs.push({id:packId,creatorId:meId,name,previewUrl,isPublic:d.isPublic,createdAt:now});
     rows.forEach(r=>db.stickers.push({id:r.id,packId:packId,imageUrl:r.image_url,emoji:'',createdAt:r.created_at}));
     if(!db.userPacks.some(x=>x.userId===meId&&x.packId===packId))db.userPacks.push({userId:meId,packId:packId,addedAt:now});
-    state.packDraft=null;state.stickerTab='my';state.stickerPackId=packId;
-    closeModal();renderStickerPanel();openStickerPanel();
+    state.packDraft=null;state.epTab='stickers';state.stickerPackId=packId;
+    closeModal();renderEmojiPanel();openEmojiPanel();
     showPlate('Набор создан','ok');
   }catch(e){showPlate('Ошибка: '+(e.message||'Проверьте настройки Storage'),'error');}
 }
@@ -687,16 +765,16 @@ async function addPackToMe(packId){
   const r=await sb.from('user_packs').insert({user_id:meId,pack_id:packId,added_at:now});
   if(dbErr('добавление набора',r))return;
   if(!db.userPacks.some(x=>x.userId===meId&&x.packId===packId))db.userPacks.push({userId:meId,packId:packId,addedAt:now});
-  state.stickerTab='my';state.stickerPackId=packId;
-  renderStickerPanel();showPlate('Набор добавлен','ok');
+  state.epTab='stickers';state.stickerPackId=packId;
+  renderEmojiPanel();showPlate('Набор добавлен','ok');
 }
 async function delPack(packId){
   const ok=await confirmDlg('Удалить набор?','Стикеры будут удалены у всех, кто его использовал.','Удалить');
-  if(!ok){renderStickerPanel();return;}
+  if(!ok){renderEmojiPanel();return;}
   db.packs=db.packs.filter(p=>p.id!==packId);
   db.stickers=db.stickers.filter(s=>s.packId!==packId);
   db.userPacks=db.userPacks.filter(r=>r.packId!==packId);
-  state.stickerPackId=null;renderStickerPanel();
+  state.stickerPackId=null;renderEmojiPanel();
   sb.from('stickers').delete().eq('pack_id',packId).then(r=>dbLog('del stickers',r));
   sb.from('user_packs').delete().eq('pack_id',packId).then(r=>dbLog('del user_packs',r));
   sb.from('sticker_packs').delete().eq('id',packId).then(r=>dbErr('удаление набора',r));
@@ -719,6 +797,8 @@ let mediaRecorder=null,recChunks=[],recTimer=null;
 const canMediaRecorder=()=>!!(window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported('audio/webm'));
 function startVoice(){
   if(state.voiceRecording)return;
+  const chat=db.chats.find(c=>c.id===state.activeChat);
+  if(chat&&chat.type==='group'&&!canSendMsg(chat,meId)){showPlate('Только администраторы могут писать в этой группе','error');return;}
   if(!canMediaRecorder()){showPlate('Откроется диктофон устройства','ok');$('#voiceFallback').click();return;}
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
     mediaRecorder=new MediaRecorder(stream,{mimeType:'audio/webm'});
@@ -737,7 +817,7 @@ function startVoice(){
         if(state.replyTo)m.replyTo=state.replyTo.id;
         addMsg(m);markRead(m.chatId);state.replyTo=null;state.voiceRecording=null;state.forceBottom=true;render();
         const res=await sb.from('messages').insert(msgToRow(m));
-        if(!dbErr('отправка голоса',res)){const chat=db.chats.find(c=>c.id===m.chatId);const pushTitle=chat&&chat.type==='group'?`${chat.name||'Группа'} · ${me().name}`:me().name;sendPush(m.chatId,pushTitle,'🎤 Голосовое · '+fmtDur(dur),'at_'+m.chatId);}
+        if(!dbErr('отправка голоса',res)){const ch=db.chats.find(c=>c.id===m.chatId);const pushTitle=ch&&ch.type==='group'?`${ch.name||'Группа'} · ${me().name}`:me().name;sendPush(m.chatId,pushTitle,'🎤 Голосовое · '+fmtDur(dur),'at_'+m.chatId);}
       }catch(e){showPlate('Ошибка: '+(e.message||'Проверьте настройки Storage'),'error');state.voiceRecording=null;renderComposerExtras();}
     };
     state.voiceRecording={startedAt:Date.now()};
@@ -749,14 +829,8 @@ function startVoice(){
 function stopVoice(){if(!mediaRecorder)return;if(mediaRecorder.state!=='inactive')mediaRecorder.stop();clearInterval(recTimer);mediaRecorder=null;}
 function cancelVoice(){if(!mediaRecorder)return;state.voiceRecording=null;mediaRecorder.onstop=()=>{mediaRecorder.stream.getTracks().forEach(t=>t.stop());};mediaRecorder.stop();clearInterval(recTimer);mediaRecorder=null;renderComposerExtras();}
 
-const REACT_EMOJI=['👍','❤️','🔥','😂','😮','😢','🎉','👏','🤔','👎'];
-const TEXT_EMOJI=['😀','😁','😂','🤣','😊','😍','😘','😎','🤔','🙃','😅','😭','😡','🥳','🤯','😴','👍','👎','👏','🙏','💪','🔥','❤️','💜','💙','🎉','✨','⚡','🌙','☀️','🍕','☕'];
-function openPicker(anchor,mode,msgId){closePicker();closeStickerPanel();const r=anchor.getBoundingClientRect();const list=mode==='react'?REACT_EMOJI:TEXT_EMOJI;const root=$('#pickerRoot');root.innerHTML=`<div class="picker ${mode==='react'?'picker--react':''}" style="visibility:hidden;left:0;top:0">${list.map(e=>`<button class="pk-e" data-action="${mode==='react'?'pick-react':'pick-text'}" data-emoji="${e}" ${msgId?`data-id="${msgId}"`:''}>${e}</button>`).join('')}</div>`;const p=root.firstElementChild;const pw=p.offsetWidth,ph=p.offsetHeight;let left=Math.max(8,Math.min(r.left,window.innerWidth-pw-8));let top=r.bottom+8;if(top+ph>window.innerHeight-8)top=r.top-ph-8;top=Math.max(8,Math.min(top,window.innerHeight-ph-8));p.style.left=left+'px';p.style.top=top+'px';p.style.visibility='visible';}
-function closePicker(){$('#pickerRoot').innerHTML='';}
-function insertEmoji(e){const ta=$('#msgInput');const s=ta.selectionStart??ta.value.length;ta.value=ta.value.slice(0,s)+e+ta.value.slice(ta.selectionEnd??s);ta.focus();ta.selectionStart=ta.selectionEnd=s+e.length;updateSendBtn();}
-
 let confirmRes=null;
-function openModal(html,wide){closeStickerPanel();$('#modalRoot').innerHTML=`<div class="modal-back" data-action="modal-close"><div class="modal ${wide?'modal--wide':''}">${html}</div></div>`;}
+function openModal(html,wide){closeEmojiPanel();$('#modalRoot').innerHTML=`<div class="modal-back" data-action="modal-close"><div class="modal ${wide?'modal--wide':''}">${html}</div></div>`;}
 function closeModal(){$('#modalRoot').innerHTML='';state.lastCreds=null;}
 function confirmDlg(title,text,okLabel='Подтвердить'){return new Promise(res=>{confirmRes=res;$('#modalRoot').innerHTML=`<div class="modal-back" data-action="modal-close"><div class="modal modal--sm"><h2 class="m-title">${esc(title)}</h2><p class="m-text-p">${esc(text)}</p><div class="m-actions"><button class="btn btn--ghost" data-action="confirm-no">Отмена</button><button class="btn btn--danger" data-action="confirm-yes">${esc(okLabel)}</button></div></div></div>`;});}
 function resolveConfirm(v){if(confirmRes){confirmRes(v);confirmRes=null;}closeModal();}
@@ -770,8 +844,8 @@ function openAccountPanel(){
    <h3 class="m-subtitle">Другой аккаунт</h3>
    <p class="m-text-p" style="font-size:12.5px">Из соображений безопасности для входа в другой аккаунт нужно ввести его пароль.</p>
    <div class="user-list">
-     ${cur?`<div class="user-row user-row--adm">${avatarHtml(cur,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(cur.name)} <span class="role-badge role-badge--you">текущий</span></div><div class="ur-sub">@${esc(cur.username)} · #${cur.id}</div></div></div>`:''}
-     ${others.map(u=>`<div class="user-row" data-action="switch-account" data-id="${u.id}">${avatarHtml(u,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)} · #${u.id}</div></div></div>`).join('')||'<p class="m-empty">Других аккаунтов нет</p>'}
+     ${cur?`<div class="user-row">${avatarHtml(cur,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(cur.name)} <span class="role-badge role-badge--you">текущий</span></div><div class="ur-sub">@${esc(cur.username)} · #${cur.id}</div></div></div>`:''}
+     ${others.map(u=>`<div class="user-row user-row--click" data-action="switch-account" data-id="${u.id}">${avatarHtml(u,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)} · #${u.id}</div></div></div>`).join('')||'<p class="m-empty">Других аккаунтов нет</p>'}
    </div>
    <button class="btn btn--block" data-action="add-account" style="margin-top:14px">${I.plus}<span>Войти в другой аккаунт</span></button>
    <div style="display:flex;gap:10px;margin-top:10px">
@@ -805,50 +879,109 @@ async function logoutAll(){
   meId=null;state.activeChat=null;closeModal();render();
 }
 
-function openNewChat(){const users=db.users.filter(u=>u.id!==meId).sort((a,b)=>((isOnline(b.id)?1:0)-(isOnline(a.id)?1:0))||a.name.localeCompare(b.name,'ru'));openModal(`<h2 class="m-title">Новый чат</h2><button class="btn btn--block" data-action="create-group" style="margin:14px 0 8px">${I.users}<span>Создать группу</span></button>${users.length?`<div class="user-list">${users.map(u=>`<div class="user-row" data-action="user-pick" data-id="${u.id}">${avatarHtml(u)}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)} · #${u.id} · ${isOnline(u.id)?'<span class="sub-online">в сети</span>':('был(а) '+(lastSeen(u.id)?fmtTime(lastSeen(u.id)):'давно'))}</div></div></div>`).join('')}</div>`:'<p class="m-empty">Нет других пользователей.<br>Попросите администратора создать аккаунт.</p>'}`);}
+function openNewChat(){const users=db.users.filter(u=>u.id!==meId).sort((a,b)=>((isOnline(b.id)?1:0)-(isOnline(a.id)?1:0))||a.name.localeCompare(b.name,'ru'));openModal(`<h2 class="m-title">Новый чат</h2><button class="btn btn--block" data-action="create-group" style="margin:14px 0 8px">${I.users}<span>Создать группу</span></button>${users.length?`<div class="user-list">${users.map(u=>`<div class="user-row user-row--click" data-action="user-pick" data-id="${u.id}">${avatarHtml(u)}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)} · #${u.id} · ${isOnline(u.id)?'<span class="sub-online">в сети</span>':('был(а) '+(lastSeen(u.id)?fmtTime(lastSeen(u.id)):'давно'))}</div></div></div>`).join('')}</div>`:'<p class="m-empty">Нет других пользователей.<br>Попросите администратора создать аккаунт.</p>'}`);}
 function openGroupModal(){
   const users=db.users.filter(u=>u.id!==meId).sort((a,b)=>a.name.localeCompare(b.name,'ru'));
   const canCreate=(state.groupName||'').trim()&&state.groupSel.size>0;
   openModal(`<div class="adm-head"><h2 class="m-title">Новая группа</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div>
     <label class="fl" style="margin-top:14px">Название группы<input class="inp" id="grpName" value="${esc(state.groupName||'')}" placeholder="Например, Команда" maxlength="40"></label>
     <h3 class="m-subtitle">Участники <span style="color:var(--muted);font-weight:600">(${state.groupSel.size})</span></h3>
-    <div class="user-list">${users.map(u=>{const sel=state.groupSel.has(u.id);return `<div class="user-row" data-action="grp-toggle" data-id="${u.id}">${avatarHtml(u,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)}</div></div><div class="grp-check ${sel?'on':''}">${sel?I.check:''}</div></div>`;}).join('')||'<p class="m-empty">Нет других пользователей</p>'}</div>
+    <div class="user-list">${users.map(u=>{const sel=state.groupSel.has(u.id);return `<div class="user-row user-row--click" data-action="grp-toggle" data-id="${u.id}">${avatarHtml(u,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)}</div></div><div class="grp-check ${sel?'on':''}">${sel?I.check:''}</div></div>`;}).join('')||'<p class="m-empty">Нет других пользователей</p>'}</div>
     <button class="btn btn--block" data-action="grp-create" ${canCreate?'':'disabled'} style="margin-top:16px">Создать группу</button>`,true);
 }
 async function createGroup(){
   const name=(state.groupName||'').trim();if(!name||state.groupSel.size===0)return;
   const cid=await uniqueId('chats');
-  const chat={id:cid,type:'group',name,description:'',avatar_url:null,createdAt:Date.now()};const now=Date.now();
+  const chat={id:cid,type:'group',name,description:'',avatar_url:null,perm_edit_info:'all',perm_send_messages:'all',perm_add_members:'all',createdAt:Date.now()};const now=Date.now();
   const memberIds=[meId,...state.groupSel];
   const wmId=await uniqueId('messages');
   const wm={id:wmId,chatId:cid,authorId:meId,text:`Группа «${name}» создана 🎉`,createdAt:Date.now(),reactions:{}};
   const r1=await sb.from('chats').insert({id:cid,type:'group',name,description:'',created_at:now});if(dbErr('создание группы',r1))return;
-  const r2a=await sb.from('chat_members').insert({chat_id:cid,user_id:meId,last_read:now,muted:false});if(dbErr('добавление участников',r2a))return;
-  const others=memberIds.filter(id=>id!==meId).map(id=>({chat_id:cid,user_id:id,last_read:0,muted:false}));
+  const r2a=await sb.from('chat_members').insert({chat_id:cid,user_id:meId,last_read:now,muted:false,role:'owner',title:''});if(dbErr('добавление участников',r2a))return;
+  const others=memberIds.filter(id=>id!==meId).map(id=>({chat_id:cid,user_id:id,last_read:0,muted:false,role:'member',title:''}));
   if(others.length){const r2b=await sb.from('chat_members').insert(others);if(dbErr('добавление участников',r2b))return;}
   const r3=await sb.from('messages').insert(msgToRow(wm));if(dbErr('сообщение',r3))return;
-  addChat(chat);addMember({chat_id:cid,user_id:meId,last_read:now,muted:false});others.forEach(r=>addMember(r));addMsg(wm);
+  addChat(chat);addMember({chat_id:cid,user_id:meId,last_read:now,muted:false,role:'owner',title:''});others.forEach(r=>addMember(r));addMsg(wm);
   state.groupSel=new Set();state.groupName='';
   closeModal();openChat(cid);
 }
 function openGroupInfo(){
   const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat||chat.type!=='group')return;
   const memberIds=membersOf(chat.id);
-  const members=memberIds.map(id=>db.users.find(u=>u.id===id)).filter(Boolean);
+  const members=memberIds.map(id=>({user:db.users.find(u=>u.id===id),member:getMember(chat.id,id)})).filter(x=>x.user);
   const nonMembers=db.users.filter(u=>!memberIds.includes(u.id));
-  const canEdit=memberIds.includes(meId);
+  const iAmOwner=isGroupOwner(chat.id,meId);
+  const canEdit=canEditInfo(chat,meId);
+  const canAdd=canAddMembers(chat,meId);
   const muted=isChatMuted(chat.id);
-  openModal(`<div class="adm-head"><h2 class="m-title">О группе</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div>
-    <div class="prof-top" style="margin-top:10px">${avatarHtml({color:colorFor(chat.name||'group'),avatar_url:chat.avatar_url,name:chat.name||'Группа'},'avatar--xl',{group:true,click:canEdit?'edit-group-avatar':null})}<div><div class="prof-name">${esc(chat.name||'Группа')}</div><div class="prof-id">ID: ${chat.id}</div>${chat.description?`<div class="prof-bio">${esc(chat.description)}</div>`:'<div class="prof-bio" style="font-style:italic">Описания пока нет</div>'}</div></div>
-    <label class="chk chk--row"><input type="checkbox" data-action="toggle-mute-check" ${muted?'checked':''}><span>Без уведомлений (mute)</span></label>
-    <h3 class="m-subtitle">Описание</h3>
-    <form data-form="group-desc"><textarea class="inp" name="desc" maxlength="500" placeholder="О чём эта группа?">${esc(chat.description||'')}</textarea><button class="btn btn--block" type="submit">Сохранить</button></form>
-    <h3 class="m-subtitle">Участники (${members.length})</h3>
-    <div class="user-list">${members.map(u=>`<div class="user-row user-row--adm">${avatarHtml(u,'avatar--sm',{showOnline:true})}<div class="ur-info"><div class="ur-name">${esc(u.name)}${u.id===meId?'<span class="role-badge role-badge--you">вы</span>':''}</div><div class="ur-sub">@${esc(u.username)} · ${isOnline(u.id)?'<span class="sub-online">в сети</span>':'был(а) '+(lastSeen(u.id)?fmtTime(lastSeen(u.id)):'давно')}</div></div></div>`).join('')}</div>
-    ${nonMembers.length?`<h3 class="m-subtitle">Добавить</h3><div class="user-list">${nonMembers.map(u=>`<div class="user-row">${avatarHtml(u,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)}</div></div><button class="btn btn-sm" data-action="grp-add" data-id="${u.id}">Добавить</button></div>`).join('')}</div>`:''}`,true);
+  const permRow=(key,label)=>{
+    const val=chat[key]||'all';
+    if(iAmOwner){
+      return `<div class="perm-row"><span>${label}</span><div class="perm-toggle"><button class="perm-opt ${val==='all'?'on':''}" data-action="set-perm" data-key="${key}" data-val="all">Все</button><button class="perm-opt ${val==='admins'?'on':''}" data-action="set-perm" data-key="${key}" data-val="admins">Админы</button></div></div>`;
+    }
+    return `<div class="perm-row"><span>${label}</span><span class="perm-val">${val==='all'?'Все участники':'Только админы'}</span></div>`;
+  };
+  openModal(`
+   <div class="adm-head"><h2 class="m-title">О группе</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div>
+   <div class="prof-top" style="margin-top:10px">${avatarHtml({color:colorFor(chat.name||'group'),avatar_url:chat.avatar_url,name:chat.name||'Группа'},'avatar--xl',{group:true,click:canEdit?'edit-group-avatar':null,edit:canEdit})}<div><div class="prof-name">${esc(chat.name||'Группа')}</div><div class="prof-id">ID: ${chat.id}</div>${chat.description?`<div class="prof-bio">${esc(chat.description)}</div>`:'<div class="prof-bio" style="font-style:italic">Описания пока нет</div>'}</div></div>
+   <label class="chk chk--row"><input type="checkbox" data-action="toggle-mute-check" ${muted?'checked':''}><span>Без уведомлений (mute)</span></label>
+   ${canEdit?`<h3 class="m-subtitle">Описание</h3><form data-form="group-desc"><textarea class="inp" name="desc" maxlength="500" placeholder="О чём эта группа?">${esc(chat.description||'')}</textarea><button class="btn btn--block" type="submit">Сохранить</button></form>`:''}
+   <h3 class="m-subtitle">Разрешения</h3>
+   ${permRow('perm_edit_info','Изменение информации (название, описание, фото)')}
+   ${permRow('perm_send_messages','Отправка сообщений')}
+   ${permRow('perm_add_members','Добавление участников')}
+   <h3 class="m-subtitle">Участники (${members.length})</h3>
+   <div class="user-list">${members.map(x=>{
+     const {user,member}=x;
+     const role=member?(member.role||'member'):'member';
+     const title=member?member.title:'';
+     const isMe=user.id===meId;
+     return `<div class="user-row">${avatarHtml(user,'avatar--sm',{showOnline:true})}<div class="ur-info"><div class="ur-name">${esc(user.name)} ${title?`<span class="admin-title">${esc(title)}</span>`:''}${role==='owner'?'<span class="role-badge role-badge--owner">владелец</span>':(role==='admin'?'<span class="role-badge">админ</span>':'')}${isMe?'<span class="role-badge role-badge--you">вы</span>':''}</div><div class="ur-sub">@${esc(user.username)} · ${isOnline(user.id)?'<span class="sub-online">в сети</span>':'был(а) '+(lastSeen(user.id)?fmtTime(lastSeen(user.id)):'давно')}</div></div>${iAmOwner&&role!=='owner'?`<div class="member-acts">${role==='admin'?`<button class="btn btn-sm btn--ghost" data-action="set-title" data-uid="${user.id}">Титул</button><button class="btn btn-sm btn--ghost" data-action="demote" data-uid="${user.id}">Снять</button>`:`<button class="btn btn-sm" data-action="promote" data-uid="${user.id}">В админы</button>`}</div>`:''}</div>`;
+   }).join('')}</div>
+   ${canAdd&&nonMembers.length?`<h3 class="m-subtitle">Добавить</h3><div class="user-list">${nonMembers.map(u=>`<div class="user-row">${avatarHtml(u,'avatar--sm')}<div class="ur-info"><div class="ur-name">${esc(u.name)}</div><div class="ur-sub">@${esc(u.username)}</div></div><button class="btn btn-sm" data-action="grp-add" data-id="${u.id}">Добавить</button></div>`).join('')}</div>`:''}
+  `,true);
+}
+async function setPerm(key,val){
+  const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat)return;
+  if(!isGroupOwner(chat.id,meId)){showPlate('Только владелец может менять разрешения','error');return;}
+  const r=await sb.from('chats').update({[key]:val}).eq('id',chat.id);
+  if(dbErr('изменение разрешений',r))return;
+  chat[key]=val;
+  renderChat();openGroupInfo();
+}
+async function promoteMember(userId){
+  const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat)return;
+  if(!isGroupOwner(chat.id,meId)){showPlate('Только владелец может назначать админов','error');return;}
+  const r=await sb.from('chat_members').update({role:'admin'}).eq('chat_id',chat.id).eq('user_id',userId);
+  if(dbErr('назначение админа',r))return;
+  const member=getMember(chat.id,userId);if(member)member.role='admin';
+  renderChat();openGroupInfo();
+}
+async function demoteMember(userId){
+  const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat)return;
+  if(!isGroupOwner(chat.id,meId)){showPlate('Только владелец может снимать админов','error');return;}
+  const r=await sb.from('chat_members').update({role:'member',title:''}).eq('chat_id',chat.id).eq('user_id',userId);
+  if(dbErr('снятие админа',r))return;
+  const member=getMember(chat.id,userId);if(member){member.role='member';member.title='';}
+  renderChat();openGroupInfo();
+}
+function openSetTitle(userId){
+  const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat)return;
+  const member=getMember(chat.id,userId);
+  const user=db.users.find(u=>u.id===userId);
+  openModal(`
+   <div class="adm-head"><h2 class="m-title">Титул для ${esc(user?user.name:'')}</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div>
+   <p class="m-text-p">Титул (префикс) отображается рядом с именем в группе.</p>
+   <form data-form="set-title">
+     <input type="hidden" name="uid" value="${userId}">
+     <input class="inp" name="title" value="${esc(member?member.title:'')}" maxlength="20" placeholder="Например: Модератор">
+     <button class="btn btn--block" type="submit">Сохранить</button>
+   </form>
+  `);
 }
 async function uploadGroupAvatar(file){
   const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat)return;
+  if(!canEditInfo(chat,meId)){showPlate('Недостаточно прав для изменения фото','error');return;}
   try{
     const url=await uploadAvatar(file,'group',chat.id);
     const r=await sb.from('chats').update({avatar_url:url}).eq('id',chat.id);
@@ -858,15 +991,16 @@ async function uploadGroupAvatar(file){
 }
 async function addGroupMember(userId){
   const chat=db.chats.find(c=>c.id===state.activeChat);if(!chat||chat.type!=='group')return;
-  const r=await sb.from('chat_members').insert({chat_id:chat.id,user_id:userId,last_read:0,muted:false});if(dbErr('добавление участника',r))return;
-  addMember({chat_id:chat.id,user_id:userId,last_read:0,muted:false});
+  if(!canAddMembers(chat,meId)){showPlate('Недостаточно прав для добавления участников','error');return;}
+  const r=await sb.from('chat_members').insert({chat_id:chat.id,user_id:userId,last_read:0,muted:false,role:'member',title:''});if(dbErr('добавление участника',r))return;
+  addMember({chat_id:chat.id,user_id:userId,last_read:0,muted:false,role:'member',title:''});
   const u=db.users.find(x=>x.id===userId);
   const wmId=await uniqueId('messages');
   const wm={id:wmId,chatId:chat.id,authorId:meId,text:`${u?u.name:'Пользователь'} добавлен(а) в группу`,createdAt:Date.now(),reactions:{}};
   addMsg(wm);sb.from('messages').insert(msgToRow(wm)).then(r=>dbErr('сообщение',r));
   renderChat();openGroupInfo();
 }
-function openAdmin(){const u=me();if(!u||u.role!=='admin')return;const users=[...db.users].sort((a,b)=>a.createdAt-b.createdAt);openModal(`<div class="adm-head"><h2 class="m-title">🛡 Админ-панель</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div><p class="m-text-p">Аккаунты создаются только отсюда. Передайте логин и пароль пользователю — сам он зарегистрироваться не сможет.</p>${state.lastCreds?`<div class="creds-box"><div><b>Аккаунт создан ✓</b><div class="creds-line">@${esc(state.lastCreds.username)} · Пароль: <code>${esc(state.lastCreds.password)}</code></div></div><button class="btn btn-sm" data-action="copy-creds">Копировать</button></div>`:''}<form data-form="create-account" class="adm-form"><div class="f-row"><label>Имя<input class="inp" name="name" required maxlength="40" placeholder="Иван Петров"></label><label>@юзернейм<input class="inp" name="username" required maxlength="20" pattern="[a-zA-Z0-9._,-]{2,20}" placeholder="ivan_2024"></label></div><div class="f-row"><label>Пароль<input class="inp" name="password" required minlength="4" maxlength="30" placeholder="минимум 4 символа"></label><label class="chk"><input type="checkbox" name="isadmin"><span>Администратор</span></label></div><span class="field-hint">Юзернейм: латиница (a-z A-Z), цифры и символы . , _ - · 2-20 символов</span><div id="admErr" class="form-err"></div><button class="btn btn--block" type="submit" style="margin-top:6px">Создать аккаунт</button></form><div class="adm-stats">Пользователей: ${db.users.length} · Сообщений: ${db.messages.length}</div><h3 class="m-subtitle">Аккаунты</h3><div class="user-list">${users.map(x=>`<div class="user-row user-row--adm">${avatarHtml(x,'avatar--sm',{showOnline:true})}<div class="ur-info"><div class="ur-name">${esc(x.name)} ${x.role==='admin'?'<span class="role-badge">admin</span>':''}${x.id===meId?'<span class="role-badge role-badge--you">вы</span>':''}</div><div class="ur-sub">@${esc(x.username)} · #${x.id} · ${isOnline(x.id)?'<span class="sub-online">в сети</span>':(lastSeen(x.id)?'был(а) '+fmtTime(lastSeen(x.id)):'не заходил(а)')}</div></div>${x.id!==meId?`<button class="icon-btn ma-btn--danger" data-action="del-account" data-id="${x.id}" title="Удалить аккаунт">${I.trash}</button>`:''}</div>`).join('')}</div>`,true);}
+function openAdmin(){const u=me();if(!u||u.role!=='admin')return;const users=[...db.users].sort((a,b)=>a.createdAt-b.createdAt);openModal(`<div class="adm-head"><h2 class="m-title">🛡 Админ-панель</h2><button class="icon-btn" data-action="modal-close">${I.x}</button></div><p class="m-text-p">Аккаунты создаются только отсюда. Передайте логин и пароль пользователю — сам он зарегистрироваться не сможет.</p>${state.lastCreds?`<div class="creds-box"><div><b>Аккаунт создан ✓</b><div class="creds-line">@${esc(state.lastCreds.username)} · Пароль: <code>${esc(state.lastCreds.password)}</code></div></div><button class="btn btn-sm" data-action="copy-creds">Копировать</button></div>`:''}<form data-form="create-account" class="adm-form"><div class="f-row"><label>Имя<input class="inp" name="name" required maxlength="40" placeholder="Иван Петров"></label><label>@юзернейм<input class="inp" name="username" required maxlength="20" pattern="[a-zA-Z0-9._,-]{2,20}" placeholder="ivan_2024"></label></div><div class="f-row"><label>Пароль<input class="inp" name="password" required minlength="4" maxlength="30" placeholder="минимум 4 символа"></label><label class="chk"><input type="checkbox" name="isadmin"><span>Администратор</span></label></div><span class="field-hint">Юзернейм: латиница (a-z A-Z), цифры и символы . , _ - · 2-20 символов</span><div id="admErr" class="form-err"></div><button class="btn btn--block" type="submit" style="margin-top:6px">Создать аккаунт</button></form><div class="adm-stats">Пользователей: ${db.users.length} · Сообщений: ${db.messages.length}</div><h3 class="m-subtitle">Аккаунты</h3><div class="user-list">${users.map(x=>`<div class="user-row">${avatarHtml(x,'avatar--sm',{showOnline:true})}<div class="ur-info"><div class="ur-name">${esc(x.name)} ${x.role==='admin'?'<span class="role-badge">admin</span>':''}${x.id===meId?'<span class="role-badge role-badge--you">вы</span>':''}</div><div class="ur-sub">@${esc(x.username)} · #${x.id} · ${isOnline(x.id)?'<span class="sub-online">в сети</span>':(lastSeen(x.id)?'был(а) '+fmtTime(lastSeen(x.id)):'не заходил(а)')}</div></div>${x.id!==meId?`<button class="icon-btn ma-btn--danger" data-action="del-account" data-id="${x.id}" title="Удалить аккаунт">${I.trash}</button>`:''}</div>`).join('')}</div>`,true);}
 async function handleCreateAccount(f){
   if(creatingAccount)return;
   const err=$('#admErr');
@@ -958,7 +1092,6 @@ function openPwaHelp(){
     <h3 class="m-subtitle">Как установить</h3>${steps}`,true);
 }
 
-/* === ВХОД через Supabase Auth + rate limiting === */
 async function handleLogin(f){
   const un=f.username.value.trim().toLowerCase();
   const pw=f.password.value;
@@ -1004,7 +1137,7 @@ document.addEventListener('click',e=>{
     return;
   }
   const act=e.target.closest('[data-action]');
-  if(!act){closePicker();closeStickerPanel();return;}
+  if(!act){closeEmojiPanel();return;}
   const a=act.dataset.action,id=act.dataset.id?Number(act.dataset.id):null;
   switch(a){
   case 'chat-pick':openChat(id);break;
@@ -1015,27 +1148,20 @@ document.addEventListener('click',e=>{
   case 'attach':$('#fileInput').click();break;
   case 'attach-remove':state.pendingFile=null;renderComposerExtras();break;
   case 'reply-cancel':state.replyTo=null;renderComposerExtras();break;
-  case 'reply':state.replyTo=db.messages.find(m=>m.id===id)||null;closePicker();renderComposerExtras();$('#msgInput').focus();break;
-  case 'open-react':openPicker(act,'react',id);break;
-  case 'composer-emoji':openPicker(act,'text');break;
-  case 'sticker':toggleStickerPanel();break;
-  case 'sp-tab':state.stickerTab=act.dataset.tab;state.stickerPackId=null;renderStickerPanel();break;
-  case 'sp-pick':state.stickerPackId=id;renderStickerPanel();break;
-  case 'sp-send':sendSticker(id);break;
-  case 'sp-create':openCreatePack();break;
-  case 'sp-close':closeStickerPanel();break;
-  case 'sp-add-pack':addPackToMe(id);break;
-  case 'sp-del-pack':delPack(id);break;
-  case 'pack-add-images':$('#packImageInput').click();break;
-  case 'pack-del-item':if(state.packDraft){state.packDraft.items.splice(Number(act.dataset.i),1);renderCreatePack();}break;
-  case 'pack-save':savePack();break;
+  case 'reply':state.replyTo=db.messages.find(m=>m.id===id)||null;closeEmojiPanel();renderComposerExtras();$('#msgInput').focus();break;
+  case 'open-react':{/* react picker via emoji panel */state.epTab='emoji';openEmojiPanel();break;}
+  case 'emoji-panel':toggleEmojiPanel();break;
+  case 'ep-tab':state.epTab=act.dataset.tab;renderEmojiPanel();break;
+  case 'ep-close':closeEmojiPanel();break;
+  case 'ep-emoji':insertEmoji(act.dataset.emoji);break;
+  case 'ep-sp-pick':state.stickerPackId=id;renderEmojiPanel();break;
+  case 'ep-sp-send':sendSticker(id);break;
   case 'react':toggleReact(id,act.dataset.emoji);break;
-  case 'pick-react':toggleReact(id,act.dataset.emoji);closePicker();break;
-  case 'pick-text':insertEmoji(act.dataset.emoji);break;
-  case 'copy-msg':{const m=db.messages.find(x=>x.id===id);if(m&&m.text)navigator.clipboard.writeText(m.text).then(()=>showPlate('Текст скопирован','ok'));closePicker();break;}
+  case 'pick-react':toggleReact(id,act.dataset.emoji);closeEmojiPanel();break;
+  case 'copy-msg':{const m=db.messages.find(x=>x.id===id);if(m&&m.text)navigator.clipboard.writeText(m.text).then(()=>showPlate('Текст скопирован','ok'));closeEmojiPanel();break;}
   case 'download':{const m=db.messages.find(x=>x.id===id);if(m&&m.file)downloadFile(m.file);break;}
   case 'download-voice':{const m=db.messages.find(x=>x.id===id);if(m&&m.voice)downloadVoice(m);break;}
-  case 'del-msg':closePicker();delMsg(id);break;
+  case 'del-msg':closeEmojiPanel();delMsg(id);break;
   case 'goto-msg':gotoMsg(id);break;
   case 'open-image':{const m=db.messages.find(x=>x.id===id);if(m&&m.file)openLightbox(m.file);break;}
   case 'open-sticker':{const m=db.messages.find(x=>x.id===id);if(m&&m.stickerUrl)openLightboxUrl(m.stickerUrl);break;}
@@ -1060,6 +1186,10 @@ document.addEventListener('click',e=>{
   case 'edit-avatar':$('#avatarInput').click();break;
   case 'edit-group-avatar':$('#avatarGroupInput').click();break;
   case 'toggle-mute':if(state.activeChat)toggleMute(state.activeChat);break;
+  case 'set-perm':setPerm(act.dataset.key,act.dataset.val);break;
+  case 'promote':promoteMember(Number(act.dataset.uid));break;
+  case 'demote':demoteMember(Number(act.dataset.uid));break;
+  case 'set-title':openSetTitle(Number(act.dataset.uid));break;
   case 'plate-ok':closePlate();break;
   case 'logout':logoutCurrent();break;
   case 'del-account':delAccount(id);break;
@@ -1081,14 +1211,25 @@ document.addEventListener('submit',e=>{const f=e.target,kind=f.dataset.form;if(!
   if(kind==='create-account')handleCreateAccount(f);
   if(kind==='change-pass')handleChangePass(f);
   if(kind==='edit-profile')handleEditProfile(f);
-  if(kind==='group-desc'){const chat=db.chats.find(c=>c.id===state.activeChat);if(chat){const desc=(f.desc.value||'').slice(0,500);chat.description=desc;sb.from('chats').update({description:desc}).eq('id',chat.id).then(r=>{if(!dbErr('описание',r)){render();closeModal();showPlate('Изменения сохранены','ok');}});}}
+  if(kind==='set-title'){
+    const uidv=Number(f.uid.value);const title=f.title.value.trim().slice(0,20);
+    const chat=db.chats.find(c=>c.id===state.activeChat);
+    if(chat&&isGroupOwner(chat.id,meId)){
+      sb.from('chat_members').update({title}).eq('chat_id',chat.id).eq('user_id',uidv).then(r=>{
+        if(dbErr('сохранение титула',r))return;
+        const member=getMember(chat.id,uidv);if(member)member.title=title;
+        renderChat();openGroupInfo();
+      });
+    }
+  }
+  if(kind==='group-desc'){const chat=db.chats.find(c=>c.id===state.activeChat);if(chat&&canEditInfo(chat,meId)){const desc=(f.desc.value||'').slice(0,500);chat.description=desc;sb.from('chats').update({description:desc}).eq('id',chat.id).then(r=>{if(!dbErr('описание',r)){render();closeModal();showPlate('Изменения сохранены','ok');}});}}
 });
 document.addEventListener('change',e=>{
   if(e.target.matches('[data-action="toggle-sound"]')){const u=me();if(u){u.sound=e.target.checked;sb.from('users').update({sound:u.sound}).eq('id',u.id).then(r=>dbErr('настройка звука',r));}}
   if(e.target.matches('[data-action="toggle-mute-check"]')){if(state.activeChat)toggleMute(state.activeChat);}
   if(e.target.id==='packPublic'&&state.packDraft){state.packDraft.isPublic=e.target.checked;}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#pickerRoot').innerHTML){closePicker();return;}if(!$('#stickerPanel').classList.contains('hidden')){closeStickerPanel();return;}if(!$('#lightbox').classList.contains('hidden')){$('#lightbox').classList.add('hidden');return;}if(!$('#plate').classList.contains('hidden')){closePlate();return;}if($('#modalRoot').innerHTML)resolveConfirm(false);}if(e.key==='Enter'&&!e.shiftKey&&e.target.id==='msgInput'){e.preventDefault();sendMessage();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#emojiPanel').classList.contains('hidden')){closeEmojiPanel();return;}if(!$('#lightbox').classList.contains('hidden')){$('#lightbox').classList.add('hidden');return;}if(!$('#plate').classList.contains('hidden')){closePlate();return;}if($('#modalRoot').innerHTML)resolveConfirm(false);}if(e.key==='Enter'&&!e.shiftKey&&e.target.id==='msgInput'){e.preventDefault();sendMessage();}});
 window.addEventListener('focus',()=>{if(me()&&state.activeChat){markRead(state.activeChat);renderSidebar();}});
 
 const msgInput=$('#msgInput');let lastTyp=0;
@@ -1117,7 +1258,7 @@ $('#voiceFallback').addEventListener('change',async e=>{
     if(state.replyTo)m.replyTo=state.replyTo.id;
     addMsg(m);markRead(m.chatId);state.replyTo=null;state.forceBottom=true;render();
     const res=await sb.from('messages').insert(msgToRow(m));
-    if(!dbErr('отправка голоса',res)){const chat=db.chats.find(c=>c.id===m.chatId);const pushTitle=chat&&chat.type==='group'?`${chat.name||'Группа'} · ${me().name}`:me().name;sendPush(m.chatId,pushTitle,'🎤 Голосовое · '+fmtDur(dur),'at_'+m.chatId);}
+    if(!dbErr('отправка голоса',res)){const ch=db.chats.find(c=>c.id===m.chatId);const pushTitle=ch&&ch.type==='group'?`${ch.name||'Группа'} · ${me().name}`:me().name;sendPush(m.chatId,pushTitle,'🎤 Голосовое · '+fmtDur(dur),'at_'+m.chatId);}
   }catch(err){showPlate('Ошибка: '+(err.message||'Проверьте настройки Storage'),'error');}
 });
 
@@ -1125,12 +1266,11 @@ setInterval(()=>{let changed=false;Object.keys(typingMap).forEach(cid=>{Object.k
 setInterval(touchPres,10000);
 setInterval(()=>{if(me()){renderSidebar();updateHeader();}},15000);
 
-$('#newChatBtn').innerHTML=I.plus;$('#attachBtn').innerHTML=I.clip;$('#emojiBtn').innerHTML=I.smile;$('#stickerBtn').innerHTML=I.sticker;$('#voiceBtn').innerHTML=I.mic;$('#sendBtn').innerHTML=I.send;
+$('#newChatBtn').innerHTML=I.plus;$('#attachBtn').innerHTML=I.clip;$('#emojiPanelBtn').innerHTML=I.smile;$('#voiceBtn').innerHTML=I.mic;$('#sendBtn').innerHTML=I.send;
 
 (async function init(){
   try{
     await loadAll();
-    // Восстанавливаем сессию Supabase Auth
     const {data:{session}}=await sb.auth.getSession();
     if(session){const prof=db.users.find(x=>x.auth_id===session.user.id);if(prof)meId=prof.id;}
   }catch(e){
