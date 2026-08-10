@@ -137,8 +137,9 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .rchip.mine{background:rgba(99,102,241,.3);border-color:rgba(129,140,248,.6)}.rchip.mine span{color:#c7d2fe}@keyframes pop{from{transform:scale(.55);opacity:0}}
 .flash{animation:flashA 1.2s}@keyframes flashA{0%,30%{box-shadow:0 0 0 3px rgba(139,92,246,.6)}100%{box-shadow:0 0 0 3px transparent}}
 
-/* === Composer: kb-offset применяется ТОЛЬКО при открытой клавиатуре === */
-.composer-wrap{background:var(--panel);border-top:1px solid var(--border);padding:10px 16px calc(14px + env(safe-area-inset-bottom) + var(--kb-offset));transition:padding-bottom .1s ease}
+/* === Composer: kb-offset ТОЛЬКО при открытой клавиатуре === */
+.composer-wrap{background:var(--panel);border-top:1px solid var(--border);padding:10px 16px calc(14px + env(safe-area-inset-bottom));transition:padding-bottom .1s ease}
+.composer-wrap.kb-active{padding-bottom:calc(14px + env(safe-area-inset-bottom) + var(--kb-offset));}
 .reply-bar,.attach-bar,.rec-bar{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:7px 10px;margin-bottom:9px;animation:msgIn .18s}
 .rec-bar{border-color:rgba(239,68,68,.55);background:rgba(239,68,68,.08)}
 .rb-ic{color:var(--accent2);display:grid;place-items:center}.rb-body{flex:1;min-width:0}
@@ -156,7 +157,8 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .send-btn--rec{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 6px 18px rgba(239,68,68,.38)}
 
 /* === Единая панель эмодзи/стикеров === */
-.emoji-panel{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom) + var(--kb-offset));width:min(430px,94vw);max-height:58vh;background:var(--panel2);border:1px solid var(--border);border-radius:18px 18px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.5);z-index:92;display:flex;flex-direction:column;overflow:hidden;animation:panelSlideUp .2s ease;transition:bottom .1s ease}
+.emoji-panel{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom));width:min(430px,94vw);max-height:58vh;background:var(--panel2);border:1px solid var(--border);border-radius:18px 18px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.5);z-index:92;display:flex;flex-direction:column;overflow:hidden;animation:panelSlideUp .2s ease;transition:bottom .1s ease}
+.emoji-panel.kb-active{bottom:calc(86px + env(safe-area-inset-bottom) + var(--kb-offset));}
 @keyframes panelSlideUp{from{transform:translateX(-50%) translateY(100%)}to{transform:translateX(-50%) translateY(0)}}
 .ep-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);gap:8px}
 .ep-tabs{display:flex;gap:4px;background:#0d1526;border-radius:10px;padding:3px}
@@ -230,7 +232,7 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .pack-manage-acts{display:flex;gap:4px;flex-shrink:0}
 
 @media(max-width:760px){.sidebar{width:100%;border-right:none}.chat-area{position:fixed;inset:0;z-index:20;background:var(--bg);transform:translateX(103%);transition:transform .28s cubic-bezier(.2,.8,.3,1)}
-body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{padding:14px 12px 8px}.bubble-col{max-width:85%}.composer-wrap{padding:8px 10px calc(12px + env(safe-area-inset-bottom) + var(--kb-offset))}.f-row{grid-template-columns:1fr}.emoji-panel{bottom:calc(76px + env(safe-area-inset-bottom) + var(--kb-offset))}.ep-grid{grid-template-columns:repeat(7,1fr)}}
+body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{padding:14px 12px 8px}.bubble-col{max-width:85%}.composer-wrap{padding:8px 10px calc(12px + env(safe-area-inset-bottom))}.composer-wrap.kb-active{padding-bottom:calc(12px + env(safe-area-inset-bottom) + var(--kb-offset));}.f-row{grid-template-columns:1fr}.emoji-panel{bottom:calc(76px + env(safe-area-inset-bottom))}.emoji-panel.kb-active{bottom:calc(76px + env(safe-area-inset-bottom) + var(--kb-offset));}.ep-grid{grid-template-columns:repeat(7,1fr)}}
 </style>
 </head>
 <body>
@@ -269,7 +271,7 @@ body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{paddin
     <div id="chatView" class="chat-view hidden">
       <header id="chatHeader" class="chat-head"></header>
       <div id="messages" class="messages"></div>
-      <div class="composer-wrap">
+      <div class="composer-wrap" id="composerWrap">
         <div id="replyBar" class="reply-bar hidden"></div>
         <div id="attachBar" class="attach-bar hidden"></div>
         <div id="recBar" class="rec-bar hidden"></div>
@@ -337,15 +339,27 @@ const ICON_ERR='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="curren
 /* ======= Клавиатура: сдвиг ТОЛЬКО при открытой клавиатуре ======= */
 (function initKeyboard(){
   const root=document.documentElement;
+  const composer=$('#composerWrap');
+  const panel=$('#emojiPanel');
   let kbOpen=false;
   function updateKbOffset(){
-    if(!window.visualViewport){root.style.setProperty('--kb-offset','0px');return;}
+    if(!window.visualViewport){
+      root.style.setProperty('--kb-offset','0px');
+      if(kbOpen){kbOpen=false;composer?.classList.remove('kb-active');panel?.classList.remove('kb-active');}
+      return;
+    }
     const vv=window.visualViewport;
-    // Клавиатура открыта только если видимая высота заметно меньше окна
+    // Клавиатура открыта только если видимая высота заметно меньше окна (>50px разница)
     const diff=window.innerHeight-vv.height-vv.offsetTop;
     const isOpen=diff>50;
-    if(isOpen!==kbOpen){kbOpen=isOpen;root.style.setProperty('--kb-offset',isOpen?diff+'px':'0px');}
-    else if(isOpen){root.style.setProperty('--kb-offset',diff+'px');}
+    if(isOpen!==kbOpen){
+      kbOpen=isOpen;
+      root.style.setProperty('--kb-offset',isOpen?diff+'px':'0px');
+      if(isOpen){composer?.classList.add('kb-active');panel?.classList.add('kb-active');}
+      else{composer?.classList.remove('kb-active');panel?.classList.remove('kb-active');}
+    }else if(isOpen){
+      root.style.setProperty('--kb-offset',diff+'px');
+    }
   }
   if(window.visualViewport){
     window.visualViewport.addEventListener('resize',updateKbOffset);
@@ -676,7 +690,7 @@ function startVoice(){
   if(!canMR()){showPlate('Откроется диктофон','ok');$('#voiceFallback').click();return;}
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{mediaRecorder=new MediaRecorder(stream,{mimeType:'audio/webm'});recChunks=[];mediaRecorder.ondataavailable=e=>{if(e.data.size>0)recChunks.push(e.data);};
     mediaRecorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());if(!state.voiceRecording){recChunks=[];renderComposerExtras();return;}const dur=Math.round((Date.now()-state.voiceRecording.startedAt)/1000);const blob=new Blob(recChunks,{type:'audio/webm'});recChunks=[];if(dur<1){state.voiceRecording=null;renderComposerExtras();showPlate('Слишком коротко','error');return;}
-      try{const url=await uploadVoiceFile(blob);const mid=await uniqueId('messages');const m={id:mid,chatId:state.activeChat,authorId:meId,text:'',voice:{url,duration:dur},createdAt:Date.now(),reactions:{}};if(state.replyTo)m.replyTo=state.replyTo.id;addMsg(m);markRead(m.chatId);state.replyTo=null;state.voiceRecording=null;state.forceBottom=true;render();const res=await sb.from('messages').insert(msgToRow(m));if(!dbErr('голос',res)){const ch=db.chats.find(c=>c.id===m.chatId);sendPush(m.chatId,ch?.type==='group'?`${ch.name} · ${me().name}`:me().name,'🎤 Голосовое · '+fmtDur(dur),'at_'+m.chatId);}}catch(e){showPlate('Ошибка: '+(e.message||''),'error');state.voiceRecording=null;renderComposerExtras();}};
+      try{const url=await uploadVoiceFile(blob);const mid=await uniqueId('messages');const m={id:mid,chatId:state.activeChat,authorId:meId,text:'',voice:{url,duration:dur},createdAt:Date.now(),reactions:{}};if(state.replyTo)m.replyTo=state.replyTo.id;addMsg(m);markRead(m.chatId);state.replyTo=null;state.voiceRecording=null;state.forceBottom=true;render();const res=await sb.from('messages').insert(msgToRow(m));if(!dbErr('голос',res)){const ch=db.chats.find(c=>c.id===m.chatId);sendPush(m.chatId,ch?.type==='group'?`${ch.name} · ${me().name}`:me().name,'🎤 '+fmtDur(dur),'at_'+m.chatId);}}catch(e){showPlate('Ошибка: '+(e.message||''),'error');state.voiceRecording=null;renderComposerExtras();}};
     state.voiceRecording={startedAt:Date.now()};mediaRecorder.start();recTimer=setInterval(renderComposerExtras,250);renderComposerExtras();
   }).catch(()=>showPlate('Микрофон недоступен','error'));
 }
@@ -716,22 +730,108 @@ function openPwaHelp(){const ua=navigator.userAgent.toLowerCase();const ios=/iph
 async function handleLogin(f){const un=f.username.value.trim().toLowerCase();const pw=f.password.value;const remember=f.remember?f.remember.checked:true;const guard=await loginGuard('check');if(!guard.allowed){$('#loginError').textContent=`Блокировка: ${guard.retryAfter} сек.`;return;}const rl=rlCheck();if(!rl.allowed){$('#loginError').textContent=`Блокировка: ${rl.retryAfter} сек.`;return;}const{data,error}=await sb.auth.signInWithPassword({email:un+AUTH_DOMAIN,password:pw});if(error){await loginGuard('fail');rlFail();$('#loginError').textContent='Неверные данные';return;}await loginGuard('success');rlClear();const prof=db.users.find(x=>x.auth_id===data.user.id);if(!prof){$('#loginError').textContent='Профиль не найден';await sb.auth.signOut();return;}meId=prof.id;if(remember){rememberAccount(prof.id);localStorage.setItem('at_active',String(prof.id));sessionStorage.removeItem('at_session');}else sessionStorage.setItem('at_session',String(prof.id));state.activeChat=null;state.replyTo=null;state.pendingFile=null;$('#loginError').textContent='';f.reset();touchPres();render();trySubscribePush();showPlate('Привет, '+prof.name+'! 👋','ok');}
 async function notifToggle(){if(!('Notification'in window)){showPlate('Не поддерживается','error');return;}if(Notification.permission==='default'){const p=await Notification.requestPermission();if(p==='granted'){trySubscribePush();showPlate('Push включены','ok');}renderSidebar();}else if(Notification.permission==='granted'){trySubscribePush();showPlate('Push работают','ok');}else showPlate('Заблокированы — разрешите в настройках','error');}
 
+/* === Глобальный обработчик кликов (исправлен для работы внутри модалок) === */
 document.addEventListener('click',e=>{
-  const ve=e.target.closest('.m-voice');if(ve){const vid=Number(ve.dataset.vid);if(e.target.closest('[data-action="voice-speed"]')){cycleVoiceSpeed(vid);return;}if(e.target.closest('[data-action="voice-seek"]')){const r=ve.querySelector('.v-track').getBoundingClientRect();seekVoice(vid,Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)));return;}if(e.target.closest('[data-action="voice-toggle"]')){toggleVoicePlay(vid);return;}return;}
-  const act=e.target.closest('[data-action]');if(!act){closeEmojiPanel();return;}const a=act.dataset.action,id=act.dataset.id?Number(act.dataset.id):null;
+  // Обработка голосовых сообщений
+  const ve=e.target.closest('.m-voice');
+  if(ve){
+    const vid=Number(ve.dataset.vid);
+    if(e.target.closest('[data-action="voice-speed"]')){cycleVoiceSpeed(vid);return;}
+    if(e.target.closest('[data-action="voice-seek"]')){const r=ve.querySelector('.v-track').getBoundingClientRect();seekVoice(vid,Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)));return;}
+    if(e.target.closest('[data-action="voice-toggle"]')){toggleVoicePlay(vid);return;}
+    return;
+  }
+  
+  // Поиск ближайшего элемента с data-action (всплывает через модалки)
+  const act=e.target.closest('[data-action]');
+  if(!act){closeEmojiPanel();return;}
+  
+  const a=act.dataset.action;
+  const id=act.dataset.id?Number(act.dataset.id):null;
+  
   switch(a){
-    case'chat-pick':openChat(id);break;case'back':document.body.classList.remove('chat-open');break;case'new-chat':openNewChat();break;case'user-pick':startDM(id);break;case'send':sendMessage();break;case'attach':$('#fileInput').click();break;case'attach-remove':state.pendingFile=null;renderComposerExtras();break;case'reply-cancel':state.replyTo=null;renderComposerExtras();break;case'reply':state.replyTo=db.messages.find(m=>m.id===id)||null;closeEmojiPanel();renderComposerExtras();$('#msgInput').focus();break;
-    case'emoji-panel':toggleEmojiPanel();break;case'ep-tab':state.epTab=act.dataset.tab;renderEmojiPanel();break;case'ep-close':closeEmojiPanel();break;case'ep-emoji':insertEmoji(act.dataset.emoji);break;case'ep-sp-pick':state.stickerPackId=id;renderEmojiPanel();break;case'ep-sp-send':sendSticker(id);break;
-    case'manage-packs':openManagePacks();break;case'create-pack':openCreatePack();break;case'edit-pack':openEditPack(id);break;case'delete-pack':delPack(id);openManagePacks();break;case'remove-pack':removePackFromMe(id);openManagePacks();break;case'delete-sticker':deleteSticker(id,Number(act.dataset.pack));break;case'add-stickers-to-pack':addStickersToPack(id);break;
-    case'pack-add-images':$('#packImageInput').click();break;case'pack-del-item':if(state.packDraft){state.packDraft.items.splice(Number(act.dataset.i),1);renderCreatePack();}break;case'pack-save':savePack();break;
-    case'react':toggleReact(id,act.dataset.emoji);break;case'copy-msg':{const m=db.messages.find(x=>x.id===id);if(m?.text)navigator.clipboard.writeText(m.text).then(()=>showPlate('Скопировано','ok'));closeEmojiPanel();break;}case'download':{const m=db.messages.find(x=>x.id===id);if(m?.file)downloadFile(m.file);break;}case'download-voice':{const m=db.messages.find(x=>x.id===id);if(m?.voice)downloadVoice(m);break;}case'del-msg':closeEmojiPanel();(async()=>{const ok=await confirmDlg('Удалить?','','Удалить');if(!ok)return;db.messages=db.messages.filter(m=>m.id!==id);renderChat();sb.from('messages').delete().eq('id',id);})();break;case'goto-msg':gotoMsg(id);break;case'open-image':{const m=db.messages.find(x=>x.id===id);if(m?.file)openLightbox(m.file);break;}case'open-sticker':{const m=db.messages.find(x=>x.id===id);if(m?.stickerUrl)openLightboxUrl(m.stickerUrl);break;}case'lb-close':$('#lightbox').classList.add('hidden');break;case'lb-download':if(state.lightbox?.data)downloadFile(state.lightbox);break;
-    case'voice':state.voiceRecording?stopVoice():startVoice();break;case'voice-cancel':cancelVoice();break;
-    case'modal-close':if(act.classList.contains('modal-back')&&e.target!==act)break;resolveConfirm(false);break;case'confirm-yes':resolveConfirm(true);break;case'confirm-no':resolveConfirm(false);break;
-    case'notif-enable':case'notif-toggle':notifToggle();break;case'notif-dismiss':state.notifDismissed=true;localStorage.setItem('at_notif_dismissed','1');renderSidebar();break;case'install-app':case'install-now':installApp();break;case'pwa-help':openPwaHelp();break;
-    case'accounts':openAccountPanel();break;case'switch-account':switchAccount(id);break;case'add-account':addAccount();break;case'logout-current':logoutCurrent();break;case'logout-all':logoutAll();break;case'admin':openAdmin();break;case'profile':openProfile();break;case'edit-avatar':$('#avatarInput').click();break;case'edit-group-avatar':$('#avatarGroupInput').click();break;case'toggle-mute':if(state.activeChat)toggleMute(state.activeChat);break;case'set-perm':setPerm(act.dataset.key,act.dataset.val);break;case'promote':promoteMember(Number(act.dataset.uid));break;case'demote':demoteMember(Number(act.dataset.uid));break;case'set-title':openSetTitle(Number(act.dataset.uid));break;case'plate-ok':closePlate();break;case'logout':logoutCurrent();break;case'del-account':delAccount(id);break;case'copy-creds':if(state.lastCreds)navigator.clipboard.writeText(`@${state.lastCreds.username}\n${state.lastCreds.password}`).then(()=>showPlate('Скопировано','ok'));break;
-    case'create-group':state.groupSel=new Set();state.groupName='';openGroupModal();break;case'grp-toggle':{state.groupSel.has(id)?state.groupSel.delete(id):state.groupSel.add(id);openGroupModal();break;}case'grp-create':createGroup();break;case'group-info':openGroupInfo();break;case'dm-info':openDmInfo();break;case'grp-add':addGroupMember(id);break;
+    case'chat-pick':openChat(id);break;
+    case'back':document.body.classList.remove('chat-open');break;
+    case'new-chat':openNewChat();break;
+    case'user-pick':startDM(id);break;
+    case'send':sendMessage();break;
+    case'attach':$('#fileInput').click();break;
+    case'attach-remove':state.pendingFile=null;renderComposerExtras();break;
+    case'reply-cancel':state.replyTo=null;renderComposerExtras();break;
+    case'reply':state.replyTo=db.messages.find(m=>m.id===id)||null;closeEmojiPanel();renderComposerExtras();$('#msgInput').focus();break;
+    
+    // Эмодзи/стикеры панель
+    case'emoji-panel':toggleEmojiPanel();break;
+    case'ep-tab':state.epTab=act.dataset.tab;renderEmojiPanel();break;
+    case'ep-close':closeEmojiPanel();break;
+    case'ep-emoji':insertEmoji(act.dataset.emoji);break;
+    case'ep-sp-pick':state.stickerPackId=id;renderEmojiPanel();break;
+    case'ep-sp-send':sendSticker(id);break;
+    
+    // Управление наборами стикеров (ТЕПЕРЬ РАБОТАЕТ!)
+    case'manage-packs':openManagePacks();break;
+    case'create-pack':openCreatePack();break;
+    case'edit-pack':openEditPack(id);break;
+    case'delete-pack':delPack(id);openManagePacks();break;
+    case'remove-pack':removePackFromMe(id);openManagePacks();break;
+    case'delete-sticker':deleteSticker(id,Number(act.dataset.pack));break;
+    case'add-stickers-to-pack':addStickersToPack(id);break;
+    
+    case'pack-add-images':$('#packImageInput').click();break;
+    case'pack-del-item':if(state.packDraft){state.packDraft.items.splice(Number(act.dataset.i),1);renderCreatePack();}break;
+    case'pack-save':savePack();break;
+    
+    case'react':toggleReact(id,act.dataset.emoji);break;
+    case'copy-msg':{const m=db.messages.find(x=>x.id===id);if(m?.text)navigator.clipboard.writeText(m.text).then(()=>showPlate('Скопировано','ok'));closeEmojiPanel();break;}
+    case'download':{const m=db.messages.find(x=>x.id===id);if(m?.file)downloadFile(m.file);break;}
+    case'download-voice':{const m=db.messages.find(x=>x.id===id);if(m?.voice)downloadVoice(m);break;}
+    case'del-msg':closeEmojiPanel();(async()=>{const ok=await confirmDlg('Удалить?','','Удалить');if(!ok)return;db.messages=db.messages.filter(m=>m.id!==id);renderChat();sb.from('messages').delete().eq('id',id);})();break;
+    case'goto-msg':gotoMsg(id);break;
+    case'open-image':{const m=db.messages.find(x=>x.id===id);if(m?.file)openLightbox(m.file);break;}
+    case'open-sticker':{const m=db.messages.find(x=>x.id===id);if(m?.stickerUrl)openLightboxUrl(m.stickerUrl);break;}
+    case'lb-close':$('#lightbox').classList.add('hidden');break;
+    case'lb-download':if(state.lightbox?.data)downloadFile(state.lightbox);break;
+    
+    case'voice':state.voiceRecording?stopVoice():startVoice();break;
+    case'voice-cancel':cancelVoice();break;
+    
+    case'modal-close':if(act.classList.contains('modal-back')&&e.target!==act)break;resolveConfirm(false);break;
+    case'confirm-yes':resolveConfirm(true);break;
+    case'confirm-no':resolveConfirm(false);break;
+    
+    case'notif-enable':case'notif-toggle':notifToggle();break;
+    case'notif-dismiss':state.notifDismissed=true;localStorage.setItem('at_notif_dismissed','1');renderSidebar();break;
+    case'install-app':case'install-now':installApp();break;
+    case'pwa-help':openPwaHelp();break;
+    
+    case'accounts':openAccountPanel();break;
+    case'switch-account':switchAccount(id);break;
+    case'add-account':addAccount();break;
+    case'logout-current':logoutCurrent();break;
+    case'logout-all':logoutAll();break;
+    case'admin':openAdmin();break;
+    case'profile':openProfile();break;
+    case'edit-avatar':$('#avatarInput').click();break;
+    case'edit-group-avatar':$('#avatarGroupInput').click();break;
+    case'toggle-mute':if(state.activeChat)toggleMute(state.activeChat);break;
+    case'set-perm':setPerm(act.dataset.key,act.dataset.val);break;
+    case'promote':promoteMember(Number(act.dataset.uid));break;
+    case'demote':demoteMember(Number(act.dataset.uid));break;
+    case'set-title':openSetTitle(Number(act.dataset.uid));break;
+    case'plate-ok':closePlate();break;
+    case'logout':logoutCurrent();break;
+    case'del-account':delAccount(id);break;
+    case'copy-creds':if(state.lastCreds)navigator.clipboard.writeText(`@${state.lastCreds.username}\n${state.lastCreds.password}`).then(()=>showPlate('Скопировано','ok'));break;
+    
+    case'create-group':state.groupSel=new Set();state.groupName='';openGroupModal();break;
+    case'grp-toggle':{state.groupSel.has(id)?state.groupSel.delete(id):state.groupSel.add(id);openGroupModal();break;}
+    case'grp-create':createGroup();break;
+    case'group-info':openGroupInfo();break;
+    case'dm-info':openDmInfo();break;
+    case'grp-add':addGroupMember(id);break;
   }
 });
+
 document.addEventListener('input',e=>{if(e.target.id==='grpName'){state.groupName=e.target.value;const b=document.querySelector('[data-action="grp-create"]');if(b)b.disabled=!((state.groupName||'').trim()&&state.groupSel.size>0);}if(e.target.id==='packName'&&state.packDraft){state.packDraft.name=e.target.value;const b=document.querySelector('[data-action="pack-save"]');if(b)b.disabled=!((state.packDraft.name||'').trim()&&state.packDraft.items.length);}});
 document.addEventListener('submit',e=>{const f=e.target,k=f.dataset.form;if(!k)return;e.preventDefault();if(k==='login')handleLogin(f);if(k==='create-account')handleCreateAccount(f);if(k==='change-pass')handleChangePass(f);if(k==='edit-profile')handleEditProfile(f);
   if(k==='set-title'){const uid=Number(f.uid.value);const title=f.title.value.trim().slice(0,20);const c=db.chats.find(c=>c.id===state.activeChat);if(c&&isGroupOwner(c.id,meId))sb.from('chat_members').update({title}).eq('chat_id',c.id).eq('user_id',uid).then(()=>{const m=getMember(c.id,uid);if(m)m.title=title;renderChat();openGroupInfo();});}
