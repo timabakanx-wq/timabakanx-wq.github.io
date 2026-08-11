@@ -20,7 +20,7 @@
 <style>
 :root{--bg:#0b1120;--panel:#111a2e;--panel2:#1a2540;--border:rgba(148,163,184,.13);--text:#e6edf7;--muted:#8ea0bd;--accent:#6366f1;--accent2:#8b5cf6;--grad:linear-gradient(135deg,#6366f1,#8b5cf6);--green:#22c55e;--red:#ef4444;--kb-offset:0px;}
 *{box-sizing:border-box}html,body{height:100%;overflow:hidden}
-body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);background:radial-gradient(1000px 600px at 88% -10%,rgba(99,102,241,.15),transparent 60%),radial-gradient(800px 500px at -10% 110%,rgba(139,92,246,.11),transparent 60%),var(--bg);}
+body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);background:radial-gradient(1000px 600px at 88% -10%,rgba(99,102,241,.15),transparent 60%),radial-gradient(800px 500px at -10% 110%,rgba(139,92,246,.11),transparent 60%),var(--bg);padding-top:env(safe-area-inset-top);}
 .hidden{display:none!important}button{font-family:inherit}.icon{width:19px;height:19px;display:block}
 ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:rgba(148,163,184,.18);border-radius:8px;border:2px solid transparent;background-clip:content-box}::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.34);background-clip:content-box}
 #loadingView{min-height:100dvh;display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}
@@ -571,7 +571,19 @@ $('#voiceFallback').addEventListener('change',async e=>{const f=e.target.files[0
 setInterval(()=>{let ch=false;Object.keys(typingMap).forEach(cid=>{Object.keys(typingMap[cid]).forEach(k=>{if(Date.now()-typingMap[cid][k]>3500){delete typingMap[cid][k];ch=true;}});});if(ch)updateHeader();},1000);
 setInterval(touchPres,10000);setInterval(()=>{if(me()){renderSidebar();updateHeader();}},15000);
 $('#newChatBtn').innerHTML=I.plus;$('#attachBtn').innerHTML=I.clip;$('#emojiPanelBtn').innerHTML=I.smile;$('#voiceBtn').innerHTML=I.mic;$('#sendBtn').innerHTML=I.send;
-(async function init(){try{await loadAll();const{data:{session}}=await sb.auth.getSession();if(session){const p=db.users.find(x=>x.auth_id===session.user.id);if(p)meId=p.id;}}catch(e){$('#loadingView').innerHTML=`<div class="load-err">⚠️ Ошибка подключения<br><span style="font-size:13px;color:#f87171">${esc(e.message||'')}</span><br><span style="opacity:.6;font-size:12px">Покажите разработчику</span><div class="copyright">by APC · As'ie Program Corporation</div></div>`;return;}if(meId&&!me()){forgetAccount(meId);if(localStorage.getItem('at_active')===String(meId))localStorage.removeItem('at_active');sessionStorage.removeItem('at_session');meId=null;}if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(e=>console.error('sw',e));setupRealtime();if(me()){touchPres();trySubscribePush();}render();})();
+(async function init(){
+  try{
+    // Сначала получаем сессию, потом загружаем данные (исправление бага с чатами)
+    const{data:{session}}=await sb.auth.getSession();
+    if(session){const p=db.users.find(x=>x.auth_id===session.user.id);if(p)meId=p.id;}
+    await loadAll();
+  }catch(e){$('#loadingView').innerHTML=`<div class="load-err">⚠️ Ошибка подключения<br><span style="font-size:13px;color:#f87171">${esc(e.message||'')}</span><br><span style="opacity:.6;font-size:12px">Покажите разработчику</span><div class="copyright">by APC · As'ie Program Corporation</div></div>`;return;}
+  if(meId&&!me()){forgetAccount(meId);if(localStorage.getItem('at_active')===String(meId))localStorage.removeItem('at_active');sessionStorage.removeItem('at_session');meId=null;}
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(e=>console.error('sw',e));
+  setupRealtime();
+  if(me()){touchPres();trySubscribePush();}
+  render();
+})();
 </script>
 </body>
 </html>
