@@ -314,18 +314,37 @@ const STAR='<svg viewBox="0 0 64 64" fill="none"><path d="M32 4c2.5 15.5 11.5 24
 const ICON_OK='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
 const ICON_ERR='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
-(function initKeyboard(){
-  const root=document.documentElement;const composer=$('#composerWrap');const panel=$('#emojiPanel');let kbOpen=false;
-  function updateKbOffset(){
-    if(!window.visualViewport){root.style.setProperty('--kb-offset','0px');if(kbOpen){kbOpen=false;composer?.classList.remove('kb-active');panel?.classList.remove('kb-active');}return;}
-    const vv=window.visualViewport;
-    const isOpen=vv.height<window.innerHeight*0.8;
-    if(isOpen!==kbOpen){kbOpen=isOpen;const offset=isOpen?Math.max(0,window.innerHeight-vv.height-vv.offsetTop):0;root.style.setProperty('--kb-offset',offset+'px');if(isOpen){composer?.classList.add('kb-active');panel?.classList.add('kb-active');}else{composer?.classList.remove('kb-active');panel?.classList.remove('kb-active');}}
-    else if(isOpen){root.style.setProperty('--kb-offset',Math.max(0,window.innerHeight-vv.height-vv.offsetTop)+'px');}
+/* === Отслеживание видимого окна и клавиатуры (переписано) === */
+(function initViewport(){
+  if(!window.visualViewport) return;
+  var root=document.documentElement;
+  var composer=document.getElementById('composerWrap');
+  var panel=document.getElementById('emojiPanel');
+  var vv=window.visualViewport;
+  var base=vv.height;      // базовая высота при закрытой клавиатуре
+  var ticking=false;
+
+  function apply(){
+    ticking=false;
+    var taken=Math.max(0, base - vv.height); // сколько пикселей съела клавиатура
+    var open = taken>120;                    // клавиатура открыта, только если съела >120px
+    root.style.setProperty('--kb-offset', open ? taken+'px' : '0px');
+    if(composer) composer.classList.toggle('kb-active', open);
+    if(panel)    panel.classList.toggle('kb-active', open);
   }
-  if(window.visualViewport){window.visualViewport.addEventListener('resize',updateKbOffset);window.visualViewport.addEventListener('scroll',updateKbOffset);}
-  window.addEventListener('resize',updateKbOffset);updateKbOffset();
+  function queue(){ if(!ticking){ ticking=true; requestAnimationFrame(apply); } }
+
+  vv.addEventListener('resize', function(){
+    if(vv.height>base) base=vv.height;   // экран стал больше — новая база
+    queue();
+  });
+  vv.addEventListener('scroll', queue);
+  window.addEventListener('orientationchange', function(){
+    setTimeout(function(){ base=vv.height; apply(); }, 300);
+  });
+  apply();
 })();
+
 
 let plateTimer=null;
 function showPlate(msg,type){type=type||'ok';const el=$('#plate');if(!el)return;$('#plateMsg').textContent=msg;$('#plateIc').innerHTML=type==='error'?ICON_ERR:ICON_OK;el.classList.remove('hidden','plate--ok','plate--error');el.classList.add('plate--'+type);const card=el.querySelector('.plate-card');card.style.animation='none';void card.offsetWidth;card.style.animation='';clearTimeout(plateTimer);if(type==='ok'){plateTimer=setTimeout(closePlate,2600);}}
