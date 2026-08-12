@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Asie_Telegraph — мессенджер</title>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#6366f1">
+<meta name="theme-color" content="#0b1120">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Asie_Telegraph">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%236366f1'/><path d='M32 4c2.5 15.5 11.5 24.5 27 27-15.5 2.5-24.5 11.5-27 27-2.5-15.5-11.5-24.5-27-27 15.5-2.5 24.5-11.5 27-27z' fill='white'/></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/cyrillic-400-normal.min.css">
@@ -20,14 +20,14 @@
 <style>
 :root{--bg:#0b1120;--panel:#111a2e;--panel2:#1a2540;--border:rgba(148,163,184,.13);--text:#e6edf7;--muted:#8ea0bd;--accent:#6366f1;--accent2:#8b5cf6;--grad:linear-gradient(135deg,#6366f1,#8b5cf6);--green:#22c55e;--red:#ef4444;--kb-offset:0px;}
 *{box-sizing:border-box}html,body{height:100%;overflow:hidden;background:var(--bg);}
-body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);background:radial-gradient(1000px 600px at 88% -10%,rgba(99,102,241,.15),transparent 60%),radial-gradient(800px 500px at -10% 110%,rgba(139,92,246,.11),transparent 60%),var(--bg);}
+body{margin:0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);background:radial-gradient(1000px 600px at 88% -10%,rgba(99,102,241,.15),transparent 60%),radial-gradient(800px 500px at -10% 110%,rgba(139,92,246,.11),transparent 60%),var(--bg);padding-bottom:env(safe-area-inset-bottom);}
 .hidden{display:none!important}button{font-family:inherit}.icon{width:19px;height:19px;display:block}
 ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:rgba(148,163,184,.18);border-radius:8px;border:2px solid transparent;background-clip:content-box}::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.34);background-clip:content-box}
-#loadingView{min-height:100dvh;display:grid;place-items:center;text-align:center;color:var(--muted);padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));}
+#loadingView{min-height:100vh;min-height:100dvh;display:grid;place-items:center;text-align:center;color:var(--muted);padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));}
 .loader-star{width:62px;height:62px;margin:0 auto 18px;border-radius:18px;background:var(--grad);display:grid;place-items:center;box-shadow:0 12px 34px rgba(99,102,241,.45);animation:loadPulse 1.4s ease-in-out infinite}
 .loader-star svg{width:32px;height:32px}@keyframes loadPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.85);opacity:.7}}
 .load-txt{font-size:15px;font-weight:600}.load-err{font-size:15px;line-height:1.7;max-width:460px}.load-err span{font-size:12.5px;opacity:.8}
-#loginView{min-height:100dvh;display:grid;place-items:center;padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));}
+#loginView{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));}
 .login-card{width:min(410px,100%);background:rgba(17,26,46,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:24px;padding:36px 32px;box-shadow:0 30px 80px rgba(0,0,0,.55);animation:slideUp .5s cubic-bezier(.2,.9,.3,1.1)}
 .logo{width:66px;height:66px;border-radius:19px;background:var(--grad);display:grid;place-items:center;margin:0 auto;position:relative;box-shadow:0 12px 34px rgba(99,102,241,.45)}
 .logo svg{width:36px;height:36px}.logo::after{content:'';position:absolute;inset:0;border-radius:19px;box-shadow:0 0 0 0 rgba(99,102,241,.5);animation:pulse 2.4s infinite}
@@ -48,7 +48,7 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .btn--danger{background:linear-gradient(135deg,#ef4444,#dc2626)}.btn--danger:hover{box-shadow:0 10px 26px rgba(239,68,68,.35)}
 .btn-sm{padding:7px 12px;font-size:13px;border-radius:10px}.form-err{color:#f87171;font-size:13px;min-height:19px;margin-top:9px}
 .copyright{text-align:center;color:var(--muted);font-size:11.5px;margin-top:22px;opacity:.6;letter-spacing:.4px}
-.app{display:flex;height:100dvh;overflow:hidden;padding-top:env(safe-area-inset-top);}
+.app{display:flex;height:100vh;height:100dvh;overflow:hidden;padding-top:env(safe-area-inset-top);}
 .sidebar{width:342px;min-width:300px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column}
 .sb-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 8px}
 .brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:17.5px;letter-spacing:-.3px}
@@ -83,7 +83,7 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .admin-title{font-size:10px;font-weight:700;background:rgba(139,92,246,.25);color:#ddd6fe;padding:2px 7px;border-radius:6px;letter-spacing:.3px}
 .foot-actions{display:flex;gap:3px}.icon-btn{width:38px;height:38px;border-radius:11px;border:none;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:.15s;flex-shrink:0}
 .icon-btn:hover{background:rgba(148,163,184,.13);color:var(--text)}.icon-btn.on{color:#86efac}.icon-btn--sm{width:30px;height:30px;border-radius:9px}.icon-btn--sm .icon{width:16px;height:16px}
-.chat-area{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;background:var(--bg)}
+.chat-area{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;background:var(--bg);padding-bottom:env(safe-area-inset-bottom);}
 .empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}.empty .big{font-size:54px;margin-bottom:14px;animation:float 3.5s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-9px)}}.empty h3{color:var(--text);margin:0 0 6px;font-size:19px}.empty p{margin:0;font-size:14px}
 .chat-view{flex:1;display:flex;flex-direction:column;min-height:0}
@@ -223,7 +223,7 @@ textarea.inp{resize:vertical;min-height:60px;line-height:1.4}
 .pack-manage-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pack-manage-meta{font-size:12px;color:var(--muted);margin-top:2px}
 .pack-manage-acts{display:flex;gap:4px;flex-shrink:0}
-@media(max-width:760px){.sidebar{width:100%;border-right:none}.chat-area{position:fixed;inset:0;z-index:20;background:var(--bg);transform:translateX(103%);transition:transform .28s cubic-bezier(.2,.8,.3,1);padding-top:env(safe-area-inset-top)}
+@media(max-width:760px){.sidebar{width:100%;border-right:none}.chat-area{position:fixed;inset:0;z-index:20;background:var(--bg);transform:translateX(103%);transition:transform .28s cubic-bezier(.2,.8,.3,1);padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 body.chat-open .chat-area{transform:none}.back-btn{display:grid}.messages{padding:14px 12px 8px}.bubble-col{max-width:85%}.composer-wrap{padding:8px 10px calc(12px + env(safe-area-inset-bottom))}.composer-wrap.kb-active{padding-bottom:calc(12px + env(safe-area-inset-bottom) + var(--kb-offset));}.f-row{grid-template-columns:1fr}.emoji-panel{bottom:calc(76px + env(safe-area-inset-bottom))}.emoji-panel.kb-active{bottom:calc(76px + env(safe-area-inset-bottom) + var(--kb-offset));}.ep-grid{grid-template-columns:repeat(7,1fr)}}
 </style>
 </head>
@@ -321,13 +321,13 @@ const ICON_ERR='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="curren
   var composer=document.getElementById('composerWrap');
   var panel=document.getElementById('emojiPanel');
   var vv=window.visualViewport;
-  var base=vv.height;      // базовая высота при закрытой клавиатуре
+  var base=vv.height;
   var ticking=false;
 
   function apply(){
     ticking=false;
-    var taken=Math.max(0, base - vv.height); // сколько пикселей съела клавиатура
-    var open = taken>120;                    // клавиатура открыта, только если съела >120px
+    var taken=Math.max(0, base - vv.height);
+    var open = taken>120;
     root.style.setProperty('--kb-offset', open ? taken+'px' : '0px');
     if(composer) composer.classList.toggle('kb-active', open);
     if(panel)    panel.classList.toggle('kb-active', open);
@@ -335,14 +335,14 @@ const ICON_ERR='<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="curren
   function queue(){ if(!ticking){ ticking=true; requestAnimationFrame(apply); } }
 
   vv.addEventListener('resize', function(){
-    if(vv.height>base) base=vv.height;   // экран стал больше — новая база
+    if(vv.height>base) base=vv.height;
     queue();
   });
   vv.addEventListener('scroll', queue);
   window.addEventListener('orientationchange', function(){
     setTimeout(function(){ base=vv.height; apply(); }, 300);
   });
-  apply();
+  setTimeout(apply, 100);
 })();
 
 
